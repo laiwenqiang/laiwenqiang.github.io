@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="how tomcat works 读书笔记," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -93,17 +93,15 @@
 
 
 
-<meta name="description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾我们创建了一个connector连接器。  将之前的程序更加模块化， 同时解析了HTTP请求，将这些信息封装到HttpRequest，这样Servlet就能够获取到这">
-<meta name="keywords" content="how tomcat works 读书笔记">
-<meta property="og:type" content="article">
-<meta property="og:title" content="《How Tomcat Works》 笔记04 一Tomcat的默认连接器">
-<meta property="og:url" content="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/index.html">
+<meta name="description" content="积少成多">
+<meta property="og:type" content="website">
+<meta property="og:title" content="laiwenqiang">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾我们创建了一个connector连接器。  将之前的程序更加模块化， 同时解析了HTTP请求，将这些信息封装到HttpRequest，这样Servlet就能够获取到这">
-<meta property="og:updated_time" content="2017-06-24T10:42:20.000Z">
+<meta property="og:description" content="积少成多">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="《How Tomcat Works》 笔记04 一Tomcat的默认连接器">
-<meta name="twitter:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾我们创建了一个connector连接器。  将之前的程序更加模块化， 同时解析了HTTP请求，将这些信息封装到HttpRequest，这样Servlet就能够获取到这">
+<meta name="twitter:title" content="laiwenqiang">
+<meta name="twitter:description" content="积少成多">
 
 
 
@@ -131,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/"/>
+  <link rel="canonical" href="http://yoursite.com/page/2/"/>
 
 
 
 
 
-  <title>《How Tomcat Works》 笔记04 一Tomcat的默认连接器 | laiwenqiang</title>
+  <title>laiwenqiang</title>
   
 
 
@@ -162,7 +160,9 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left 
+   page-home 
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -245,9 +245,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -273,7 +273,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" itemprop="url">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</a></h1>
         
 
         <div class="post-meta">
@@ -320,7 +322,9 @@
       
 
       
-        <blockquote>
+        
+          
+            <blockquote>
 <p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。<br>所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
 </blockquote>
 <h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a>上节回顾</h1><p>我们创建了一个connector连接器。</p>
@@ -394,72 +398,46 @@
 <hr>
 <p>一步一个脚印<br>本章未完成，(^__^)</p>
 
+          
+        
       
     </div>
 
     <div>
       
-        
-
-      
     </div>
 
     <div>
       
-        
-
-      
     </div>
 
     <div>
-      
-        
-
       
     </div>
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/how-tomcat-works-读书笔记/" rel="tag"># how tomcat works 读书笔记</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/" rel="prev" title="《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)">
-                《How Tomcat Works》 笔记05 Tomcat的默认连接器(续) <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
 
           </div>
@@ -467,10 +445,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-  </div>
-
 
         </div>
         
@@ -490,17 +464,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -553,22 +518,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#上节回顾"><span class="nav-number">1.</span> <span class="nav-text">上节回顾</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概要"><span class="nav-number">2.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接器"><span class="nav-number">3.</span> <span class="nav-text">连接器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Connector接口"><span class="nav-number">3.1.</span> <span class="nav-text">Connector接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpConnector类"><span class="nav-number">3.2.</span> <span class="nav-text">HttpConnector类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建ServerSocket"><span class="nav-number">3.2.1.</span> <span class="nav-text">创建ServerSocket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#维护HttpProcessor线程池"><span class="nav-number">3.2.2.</span> <span class="nav-text">维护HttpProcessor线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理HTTP"><span class="nav-number">3.2.3.</span> <span class="nav-text">处理HTTP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpProcessor类"><span class="nav-number">3.3.</span> <span class="nav-text">HttpProcessor类</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -682,10 +631,10 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-
+  
 
   
 
