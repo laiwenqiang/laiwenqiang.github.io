@@ -1,0 +1,759 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="how tomcat works 读书笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾剖析了Tomcat的HttpConnector类。 工作原理梗概如下：  用工厂模式创建出ServerSocket。 创建特定数量的HttpProcessor对象池，">
+<meta name="keywords" content="how tomcat works 读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)">
+<meta property="og:url" content="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/index.html">
+<meta property="og:site_name" content="laiwenqiang">
+<meta property="og:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾剖析了Tomcat的HttpConnector类。 工作原理梗概如下：  用工厂模式创建出ServerSocket。 创建特定数量的HttpProcessor对象池，">
+<meta property="og:updated_time" content="2017-06-24T10:43:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)">
+<meta name="twitter:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾剖析了Tomcat的HttpConnector类。 工作原理梗概如下：  用工厂模式创建出ServerSocket。 创建特定数量的HttpProcessor对象池，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/"/>
+
+
+
+
+
+  <title>《How Tomcat Works》 笔记05 Tomcat的默认连接器(续) | laiwenqiang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">laiwenqiang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。<br>所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
+</blockquote>
+<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a>上节回顾</h1><p>剖析了Tomcat的<code>HttpConnector</code>类。</p>
+<p>工作原理梗概如下：</p>
+<ol>
+<li>用工厂模式创建出ServerSocket。</li>
+<li>创建特定数量的HttpProcessor对象池，用于处理Socket请求；</li>
+<li>同时，会启动HttpProcessor线程。由于没有请求，所以所有的HttpProcessor都会阻塞在那里。</li>
+<li>调用HttpConnector的run方法，等待Socket请求。</li>
+<li>当请求来临，从对象池中pop出一个HttpProcessor实例。</li>
+<li>调用HttpProcessor的<code>assign</code>方法，将Socket实例传递给HttpProcessor；</li>
+<li>并且，唤醒在HttpProcessor中被阻塞的线程，用于处理Socket请求。</li>
+</ol>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>这里会主要关注<code>HttpProcessor</code>异步处理请求的方法。</p>
+<h1 id="HttpProcessor类"><a href="#HttpProcessor类" class="headerlink" title="HttpProcessor类"></a>HttpProcessor类</h1><p>在前几个章节中，我们自己写的处理请求的代码是同步的。他必须等待处理完<code>process</code>方法，才能接收新的Socket。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="keyword">while</span> (!stopped) &#123;</div><div class="line">        Socket socket = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">			socket = serversocket.accept(); </div><div class="line">        &#125;</div><div class="line">        <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="comment">// Hand this socket off to an Httpprocessor</span></div><div class="line">       HttpProcessor processor = <span class="keyword">new</span> Httpprocessor(<span class="keyword">this</span>);</div><div class="line"> 	   processor.process(socket);</div><div class="line">	&#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而Tomcat中，这是异步的。</p>
+<h2 id="run方法"><a href="#run方法" class="headerlink" title="run方法"></a>run方法</h2><p>它的逻辑是，接收Socket，然后处理请求，最后将HttpConnector实例放回到对象池中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// Process requests until we receive a shutdown signal</span></div><div class="line">    <span class="keyword">while</span> (!stopped) &#123;</div><div class="line">        <span class="comment">// Wait for the next socket to be assigned</span></div><div class="line">        Socket socket = await();</div><div class="line">        <span class="keyword">if</span> (socket == <span class="keyword">null</span>)</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        <span class="comment">// Process the request from this socket</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            process(socket);</div><div class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">            log(<span class="string">"process.invoke"</span>, t);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// Finish up this request</span></div><div class="line">        connector.recycle(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// Tell threadStop() we have shut ourselves down successfully</span></div><div class="line">    <span class="keyword">synchronized</span> (threadSync) &#123;</div><div class="line">        threadSync.notifyAll();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>while方法做循环，很常见。</p>
+<p><strong>在上一章节中我们已经说过，HttpConnector会创建HttpProcessor，并且启动线程的run方法，同时它被放在对象池中，一直阻塞着。</strong></p>
+<p>那么run方法为何会一直阻塞着呢？很简单，因为在while循环中的<code>await</code>方法。</p>
+<h2 id="await方法"><a href="#await方法" class="headerlink" title="await方法"></a>await方法</h2><p>执行的流程如下：</p>
+<ol>
+<li>while循环中<code>available</code>条件的初始状态是false，表示没有请求。所以它就一直处于<code>wait</code>等待状态。</li>
+<li>一旦有请求（在assign方法中，会将available设置为true，并且释放线程锁。await得以调用。），await将会获取线程锁，代码跳出循环得以向下执行。</li>
+<li>然后，它将<code>available</code>条件设置为false，通过<code>notifyAll</code>释放线程锁，返回Socket实例。</li>
+<li>这样，当前Scoket的await方法就执行完成，返回run方法中。</li>
+<li>在run方法中，继续其他操作。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> Socket <span class="title">await</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// Wait for the Connector to provide a new Socket</span></div><div class="line">    <span class="keyword">while</span> (!available) &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            wait();</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// Notify the Connector that we have received this Socket</span></div><div class="line">    Socket socket = <span class="keyword">this</span>.socket;</div><div class="line">    available = <span class="keyword">false</span>;</div><div class="line">    notifyAll();</div><div class="line">  </div><div class="line">    <span class="keyword">if</span> ((debug &gt;= <span class="number">1</span>) &amp;&amp; (socket != <span class="keyword">null</span>))</div><div class="line">        log(<span class="string">"  The incoming request has been awaited"</span>);</div><div class="line">    <span class="keyword">return</span> (socket);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="一个问题"><a href="#一个问题" class="headerlink" title="一个问题"></a>一个问题</h3><p>这里有个问题值得注意一下，<strong>为何需要调用notifyAll方法，作用是什么，是否多此一举呢？</strong></p>
+<p>书上是这么解释的：</p>
+<blockquote>
+<p>为什么 await 需要使用一个本地变量(socket)而不是返回实例的 socket 变量呢?因为这样一来，在当前 socket 被完全处理之前，实例的 socket 变量可以赋给下一个前来的 socket。</p>
+<p>为什么 await 方法需要调用 notifyAll 呢? 这是为了防止在 available 为 true 的时候另一个 socket 到来。在这种情况下，连接器线程将会在 assign 方法的 while 循环中停止，直到接收到处理器线程的 notifyAll 调用。</p>
+</blockquote>
+<p>意思大概就是，一个HttpProcessor实例在同一时间只能处理一个Socket的请求，但是设置一个本地socket变量，可以让HttpProcessor提前存储下一个Socket请求。</p>
+<p>可是将Socket传递给HttpProcessor的时候，HttpProcessor是需要从对象池中获取而来的。在处理当前请求的HttpProcessor明显不在对象池中，它是如何能够提前存储下一个Socket请求呢？</p>
+<p><strong>这个问题我还未找到答案。待以后处理。</strong></p>
+<h2 id="assign方法"><a href="#assign方法" class="headerlink" title="assign方法"></a>assign方法</h2><p>刚刚我们说了，await方法会阻塞。直到assign方法被调用，释放了线程锁，await才得以继续执行。</p>
+<p><code>assign</code>方法的作用就是，</p>
+<ol>
+<li>接收由HttpConnector传递的Socket实例。</li>
+<li>释放线程锁，让<code>await</code>方法得以调用。</li>
+</ol>
+<p><code>available</code>属性是false，我们得知。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">assign</span><span class="params">(Socket socket)</span> </span>&#123;</div><div class="line">    <span class="comment">// Wait for the Processor to get the previous Socket</span></div><div class="line">    <span class="keyword">while</span> (available) &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            	wait();</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// Store the newly available Socket and notify our thread</span></div><div class="line">    <span class="keyword">this</span>.socket = socket;</div><div class="line">    available = <span class="keyword">true</span>;</div><div class="line">    notifyAll();</div><div class="line"></div><div class="line">    <span class="keyword">if</span> ((debug &gt;= <span class="number">1</span>) &amp;&amp; (socket != <span class="keyword">null</span>))</div><div class="line">        log(<span class="string">" An incoming request is being assigned"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a>处理请求</h1><p><code>pocess</code>方法，会做：</p>
+<ol>
+<li>解析连接</li>
+<li>解析请求</li>
+<li>解析头部</li>
+</ol>
+<p>解析数据是在一个white循环中进行的。</p>
+<p>循环条件中<code>keepAlive</code>是由Http请求控制的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">keepAlive = <span class="keyword">true</span>;</div><div class="line"><span class="keyword">while</span> (!stopped &amp;&amp; ok &amp;&amp; keepAlive) &#123;</div><div class="line">...</div><div class="line">  <span class="keyword">if</span> ( <span class="string">"close"</span>.equals(response.getHeader(<span class="string">"Connection"</span>)) ) &#123;</div><div class="line">                keepAlive = <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>里面的处理数据代码主要是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (ok) &#123;</div><div class="line">    parseConnection(socket);</div><div class="line">    parseRequest(input, output);</div><div class="line">    <span class="keyword">if</span> (!request.getRequest().getProtocol()</div><div class="line">        .startsWith(<span class="string">"HTTP/0"</span>))</div><div class="line">        parseHeaders(input);</div><div class="line">    <span class="keyword">if</span> (http11) &#123;</div><div class="line">        <span class="comment">// Sending a request acknowledge back to the client if</span></div><div class="line">        <span class="comment">// requested.</span></div><div class="line">        ackRequest(output);</div><div class="line">        <span class="comment">// If the protocol is HTTP/1.1, chunking is allowed.</span></div><div class="line">        <span class="keyword">if</span> (connector.isChunkingAllowed())</div><div class="line">            response.setAllowChunking(<span class="keyword">true</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>都是在处理数据。其他的略。</p>
+<h2 id="解析连接"><a href="#解析连接" class="headerlink" title="解析连接"></a>解析连接</h2><p><code>parseConnection</code>方法从套接字中获取到网络地址并把它赋予 HttpRequestImpl 对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">parseConnection</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</div><div class="line">	<span class="keyword">if</span> (debug &gt;= <span class="number">2</span>)</div><div class="line">		log(<span class="string">" parseConnection: address="</span> + socket.getInetAddress() +</div><div class="line">				<span class="string">", port="</span> + connector.getPort());</div><div class="line">	((HttpRequestImpl) request).setInet(socket.getInetAddress()); </div><div class="line">  	<span class="keyword">if</span> (proxyPort != <span class="number">0</span>)</div><div class="line">		request.setServerPort(proxyPort); </div><div class="line">  	<span class="keyword">else</span></div><div class="line">		request.setServerPort(serverPort);</div><div class="line">	request.setSocket(socket); </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="解析请求"><a href="#解析请求" class="headerlink" title="解析请求"></a>解析请求</h2><p><code>parseRequest</code>方法和我们之前章节实现的差不多。</p>
+<h2 id="解析头部"><a href="#解析头部" class="headerlink" title="解析头部"></a>解析头部</h2><p><code>parseHeaders</code>方法使用包<code>org.apache.catalina.connector.http</code>里边的 HttpHeader 和 DefaultHeaders 类。类 HttpHeader 指代一个 HTTP 请求头部。内容也类似，略过。</p>
+<h1 id="简单的容器"><a href="#简单的容器" class="headerlink" title="简单的容器"></a>简单的容器</h1><p>容器的作用，</p>
+<ol>
+<li>用来动态load出Servlet，</li>
+<li>并且将Request和Response传递给它，执行它的service方法。</li>
+</ol>
+<p>它需要实现<code>org.apache.catalina.Container</code>接口。</p>
+<p>现在，我们自己实现一个容器，然后将这个容器传递给<code>org.apache.catalina.connector.http.HttpConnector</code>。</p>
+<p>代码和之前的很类似，只是从将一些功能从<code>ServeletProcessor</code>中分离了出来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleContainer</span> <span class="keyword">implements</span> <span class="title">Container</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String WEB_ROOT = System.getProperty(<span class="string">"user.dir"</span>) + File.separator + <span class="string">"webroot"</span>;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(Request request, Response response)</span></span></div><div class="line">    <span class="keyword">throws</span> IOException, ServletException &#123;</div><div class="line"></div><div class="line">    String servletName = ( (HttpServletRequest) request).getRequestURI();</div><div class="line">    servletName = servletName.substring(servletName.lastIndexOf(<span class="string">"/"</span>) + <span class="number">1</span>);</div><div class="line">    URLClassLoader loader = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      URL[] urls = <span class="keyword">new</span> URL[<span class="number">1</span>];</div><div class="line">      URLStreamHandler streamHandler = <span class="keyword">null</span>;</div><div class="line">      File classPath = <span class="keyword">new</span> File(WEB_ROOT);</div><div class="line">      String repository = (<span class="keyword">new</span> URL(<span class="string">"file"</span>, <span class="keyword">null</span>, classPath.getCanonicalPath() </div><div class="line">                                   + File.separator)).toString() ;</div><div class="line">      urls[<span class="number">0</span>] = <span class="keyword">new</span> URL(<span class="keyword">null</span>, repository, streamHandler);</div><div class="line">      loader = <span class="keyword">new</span> URLClassLoader(urls);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">      System.out.println(e.toString() );</div><div class="line">    &#125;</div><div class="line">    Class myClass = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      myClass = loader.loadClass(servletName);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</div><div class="line">      System.out.println(e.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Servlet servlet = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      servlet = (Servlet) myClass.newInstance();</div><div class="line">      servlet.service((HttpServletRequest) request, (HttpServletResponse) response);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">      System.out.println(e.toString());</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">catch</span> (Throwable e) &#123;</div><div class="line">      System.out.println(e.toString());</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>启动类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ext04.pyrmont.startup;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.ext04.pyrmont.core.SimpleContainer;</div><div class="line"><span class="keyword">import</span> org.apache.catalina.connector.http.HttpConnector;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/25.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BootStrap</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        HttpConnector connector = <span class="keyword">new</span> HttpConnector();</div><div class="line">        SimpleContainer container = <span class="keyword">new</span> SimpleContainer();</div><div class="line">        connector.setContainer(container);</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            connector.initialize();</div><div class="line">            connector.start();</div><div class="line"></div><div class="line">            <span class="comment">// 加上这句话，防止main方法退出。阻塞在那。</span></div><div class="line">            System.in.read();</div><div class="line"></div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打开浏览器，输入<code>http://localhost:8080/servlet/PrimitiveServlet</code>，得出结果。</p>
+<hr>
+<p>一步一个脚印<br>本章完成，(^__^)</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/how-tomcat-works-读书笔记/" rel="tag"># how tomcat works 读书笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/24/HowTomcatWorks学习笔记06--容器/" rel="next" title="《How Tomcat Works》 笔记06 容器">
+                <i class="fa fa-chevron-left"></i> 《How Tomcat Works》 笔记06 容器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" rel="prev" title="《How Tomcat Works》 笔记04 一Tomcat的默认连接器">
+                《How Tomcat Works》 笔记04 一Tomcat的默认连接器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="laiwenqiang" />
+          <p class="site-author-name" itemprop="name">laiwenqiang</p>
+           
+              <p class="site-description motion-element" itemprop="description">积少成多</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#上节回顾"><span class="nav-number">1.</span> <span class="nav-text">上节回顾</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概要"><span class="nav-number">2.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpProcessor类"><span class="nav-number">3.</span> <span class="nav-text">HttpProcessor类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#run方法"><span class="nav-number">3.1.</span> <span class="nav-text">run方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#await方法"><span class="nav-number">3.2.</span> <span class="nav-text">await方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一个问题"><span class="nav-number">3.2.1.</span> <span class="nav-text">一个问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assign方法"><span class="nav-number">3.3.</span> <span class="nav-text">assign方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#处理请求"><span class="nav-number">4.</span> <span class="nav-text">处理请求</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解析连接"><span class="nav-number">4.1.</span> <span class="nav-text">解析连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析请求"><span class="nav-number">4.2.</span> <span class="nav-text">解析请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析头部"><span class="nav-number">4.3.</span> <span class="nav-text">解析头部</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单的容器"><span class="nav-number">5.</span> <span class="nav-text">简单的容器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">laiwenqiang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
