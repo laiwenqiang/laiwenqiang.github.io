@@ -163,7 +163,8 @@
   <div class="container sidebar-position-left 
    page-home 
  ">
-    <div class="headband"></div>
+    <div class="headband">
+    </div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-wrapper">
@@ -324,322 +325,23 @@
       
         
           
-            <p>启动：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo /usr/local/mysql/support-files/mysql.server start</div></pre></td></tr></table></figure>
-<p>停止：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo /usr/local/mysql/support-files/mysql.server stop</div></pre></td></tr></table></figure>
-<p>还是比较麻烦，可以简化一下：在~/.bash_aliases中添加这样的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">alias mysqlstart=&apos;sudo /usr/local/mysql/support-files/mysql.server start&apos;</div><div class="line">alias mysqlstop=&apos;sudo /usr/local/mysql/support-files/mysql.server stop&apos;</div></pre></td></tr></table></figure>
-<p>如果没有.bash_aliases文件，可以创建一个，并在.bash_profile文件的最后加上这样的代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if [ -f ~/.bash_aliases ]; then</div><div class="line">. ~/.bash_aliases</div><div class="line">fi</div></pre></td></tr></table></figure>
+          启动：
+1sudo /usr/local/mysql/support-files/mysql.server start
+停止：
+1sudo /usr/local/mysql/support-files/mysql.server stop
+还是比较麻烦，可以简化一下：在~/.bash_aliases中添加这样的命令：
+12alias mysqlstart=&apos;sudo /usr/local/mysql/support-files/mysql.server start&apos;alias mysqlstop=&apos;sudo /usr/local/mysql/support-files/mysql.server stop&apos;
+如果没有.bash_aliases文件，可以创建一个，并在.bash_profile文件的最后加上这样的代码：
+123if [ -f ~/.bash_aliases ]; then. ~/.bash_aliasesfi
 
           
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/" itemprop="url">《How Tomcat Works》 笔记01 一个简单的Web容器</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
-                2017-06-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
-</blockquote>
-<p>本章节，简要介绍HTTP协议，并且实现一个简陋的web服务器。<br>主要运用到java.net.Socket和java.net.ServerSocket，并且通过Http消息和客户端进行通信。</p>
-<hr>
-<h1 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a><strong>HTTP协议</strong></h1><p>（基本上是书上的概念搬过来。）</p>
-<h2 id="HTTP-Request"><a href="#HTTP-Request" class="headerlink" title="HTTP Request"></a><strong>HTTP Request</strong></h2><p>一个HTTP请求，包含三部分：</p>
-<ol>
-<li>Method–URI–Protocol/version</li>
-<li>Request headers</li>
-<li>Entity body</li>
-</ol>
-<p>例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">POST /examples/default.jsp HTTP/1.1 Accept: text/plain; text/html Accept-Language: en-gb</div><div class="line">Connection: Keep-Alive</div><div class="line">Host: localhost</div><div class="line">User-Agent: Mozilla/4.0 (compatible; MSIE 4.01; Windows 98) Content-Length: 33</div><div class="line">Content-Type: application/x-www-form-urlencoded Accept-Encoding: gzip, deflate</div><div class="line"></div><div class="line">lastName=Franks&amp;firstName=Michael</div></pre></td></tr></table></figure></p>
-<p>请求方法包括：GET、POST、HEAD、OPTIONS、PUT、DELETE 和 TRACE。</p>
-<p>URI 指明了请求资源的地址，通常是从网站更目录开始计算的一个相对路径，因此它总是以斜线“ /”开头的。<br>URL 实际上是 URI 的一种类型。</p>
-<p>请求头(header)中包含了一些关于客户端环境和请求实体(entity)的有用的信息。<br>例如，客户端浏览器所使用的语言，请求实体信息的长度等。<br>每个请求头使用 CRLF(回车换行符，“\r\n”)分隔。</p>
-<p>注意请求头的格式:<br>请求头名+英文空格+请求头值</p>
-<p>请求头和请求实体之间有一个空白行(CRLF)。这是 HTTP 协议规定的格式。HTTP 服务器，以此确定请求实体是从哪里开始的。</p>
-<p>上面的例子中，请求实体是:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lastName=Franks&amp;firstName=Michael</div></pre></td></tr></table></figure></p>
-<h2 id="HTTP-Response"><a href="#HTTP-Response" class="headerlink" title="HTTP Response"></a><strong>HTTP Response</strong></h2><p>HTTP Response也有三部分，</p>
-<ol>
-<li>Protocol–Status Code –Description</li>
-<li>Response heads</li>
-<li>Entity body</li>
-</ol>
-<p>例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">HTTP/1.1 200 OK</div><div class="line">Server: Microsoft-IIS/4.0</div><div class="line">Date: Mon, 5 Jan 2004 13:13:33 GMT Content-Type: text/html</div><div class="line">Last-Modified: Mon, 5 Jan 2004 13:13:12 GMT Content-Length: 112</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;title&gt;HTTP Response Example&lt;/title&gt; &lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">Welcome to Brainy Software</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>注意响应实体(entity)与响应头(header)之间有一个空白行(CRLF)。</p>
-<hr>
-<h1 id="Socket和ServerSocket"><a href="#Socket和ServerSocket" class="headerlink" title="Socket和ServerSocket"></a><strong>Socket和ServerSocket</strong></h1><p>Socket类表示一个客户端，而ServerSocket表示一个服务端。连接的流程如下，</p>
-<ol>
-<li>在服务端建立ServerSocket，等待请求。</li>
-<li>一旦请求来，则创建一个Socket连接，进行通信。</li>
-</ol>
-<hr>
-<h1 id="简陋的web服务器"><a href="#简陋的web服务器" class="headerlink" title="简陋的web服务器"></a><strong>简陋的web服务器</strong></h1><p>这里我们创建一个服务器，功能很简单，就是在浏览器上显示几句话。我们用到上面HTTP Response的例子，返回“Welcome to Brainy Software”这句话。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.OutputStream;</div><div class="line"><span class="keyword">import</span> java.net.InetAddress;</div><div class="line"><span class="keyword">import</span> java.net.ServerSocket;</div><div class="line"><span class="keyword">import</span> java.net.Socket;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Created by laiwenqiang on 2017/5/16.</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleServer</span> </span>&#123;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"></div><div class="line">ServerSocket serverSocket = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">int</span> port = <span class="number">8080</span>;</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">serverSocket = <span class="keyword">new</span> ServerSocket(port, <span class="number">1</span>, InetAddress.getByName(<span class="string">"127.0.0.1"</span>));</div><div class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">e.printStackTrace();</div><div class="line">System.exit(<span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</div><div class="line">Socket socket = <span class="keyword">null</span>;</div><div class="line">OutputStream outputStream = <span class="keyword">null</span>;</div><div class="line"></div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">socket = serverSocket.accept();</div><div class="line">outputStream = socket.getOutputStream();</div><div class="line"></div><div class="line">String msg = <span class="string">"HTTP/1.1 200 OK\r\n"</span> +</div><div class="line"><span class="string">"Content-Type: text/html\r\n"</span> +</div><div class="line"><span class="string">"\r\n"</span> +</div><div class="line"><span class="string">"&lt;html&gt;\r\n"</span> +</div><div class="line"><span class="string">"&lt;head&gt;\r\n"</span> +</div><div class="line"><span class="string">"&lt;title&gt;HTTP Response Example&lt;/title&gt;\r\n"</span> +</div><div class="line"><span class="string">"&lt;/head&gt;\r\n"</span> +</div><div class="line"><span class="string">"&lt;body&gt;\r\n"</span> +</div><div class="line"><span class="string">"Welcome to Brainy Software\r\n"</span> +</div><div class="line"><span class="string">"&lt;/body&gt;\r\n"</span> +</div><div class="line"><span class="string">"&lt;/html&gt;"</span>;</div><div class="line">outputStream.write(msg.getBytes());</div><div class="line"></div><div class="line">Thread.sleep(<span class="number">50</span>);<span class="comment">//由于是阻塞写入，暂停 50ms，保证可以写入。</span></div><div class="line"></div><div class="line">socket.close();</div><div class="line"></div><div class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">e.printStackTrace();</div><div class="line"><span class="keyword">continue</span>;</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<font color="red">上面的休眠50毫秒，是必要的。如果没有那段代码的话，客户端可能会接收不到返回的数据。</font>
-
-<p>运行后，我们在浏览器输入：<a href="http://127.0.0.1:8080，得到结果：" target="_blank" rel="external">http://127.0.0.1:8080，得到结果：</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Welcome to Brainy Software</div></pre></td></tr></table></figure></p>
-<hr>
-<h1 id="稍微复杂一点的web服务器"><a href="#稍微复杂一点的web服务器" class="headerlink" title="稍微复杂一点的web服务器"></a><strong>稍微复杂一点的web服务器</strong></h1><p>这个就是书上的例子，和上面的代码本质上是一样的，区别在于他把请求和相应做了封装。功能上也有所不同，他请求webroot目录下的文件，如果不存在返回404。</p>
-<h2 id="创建服务端"><a href="#创建服务端" class="headerlink" title="创建服务端"></a><strong>创建服务端</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.io.OutputStream;</div><div class="line"><span class="keyword">import</span> java.net.InetAddress;</div><div class="line"><span class="keyword">import</span> java.net.ServerSocket;</div><div class="line"><span class="keyword">import</span> java.net.Socket;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Created by laiwenqiang on 2017/5/16.</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpServer</span> </span>&#123;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String WEB_ROOT = System.getProperty(<span class="string">"user.dir"</span>) + File.separator + <span class="string">"webroot"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">boolean</span> shutdown = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SHUTDOWN_COMMAND = <span class="string">"/SHUTDOWN"</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">HttpServer server = <span class="keyword">new</span> HttpServer();</div><div class="line">server.await();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">await</span><span class="params">()</span></span>&#123;</div><div class="line">ServerSocket serverSocket = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">int</span> port = <span class="number">8080</span>;</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">serverSocket = <span class="keyword">new</span> ServerSocket(port, <span class="number">1</span>, InetAddress.getByName(<span class="string">"127.0.0.1"</span>));</div><div class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">e.printStackTrace();</div><div class="line">System.exit(<span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">while</span>(!shutdown)&#123;</div><div class="line">Socket socket = <span class="keyword">null</span>;</div><div class="line">InputStream inputStream = <span class="keyword">null</span>;</div><div class="line">OutputStream outputStream = <span class="keyword">null</span>;</div><div class="line"></div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">socket = serverSocket.accept();</div><div class="line">inputStream = socket.getInputStream();</div><div class="line">outputStream = socket.getOutputStream();</div><div class="line"></div><div class="line">Request request = <span class="keyword">new</span> Request(inputStream);</div><div class="line">request.parse();</div><div class="line">Response response = <span class="keyword">new</span> Response(outputStream);</div><div class="line">response.setRequest(request);</div><div class="line">response.sendStaticResource();</div><div class="line">socket.close();</div><div class="line"></div><div class="line"><span class="comment">//request.getUri可能会返回null值。由于做了异常处理，所以循环会继续。</span></div><div class="line">shutdown = request.getUri().equals(SHUTDOWN_COMMAND);</div><div class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">e.printStackTrace();</div><div class="line"><span class="keyword">continue</span>;</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="封装请求"><a href="#封装请求" class="headerlink" title="封装请求"></a><strong>封装请求</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Created by laiwenqiang on 2017/5/16.</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> InputStream inputStream;</div><div class="line"><span class="keyword">private</span> String uri;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Request</span><span class="params">(InputStream inputStream)</span> </span>&#123;</div><div class="line"><span class="keyword">this</span>.inputStream = inputStream;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//从输入流中获取uri</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">parse</span><span class="params">()</span> </span>&#123;</div><div class="line">StringBuffer request = <span class="keyword">new</span> StringBuffer(<span class="number">2048</span>);</div><div class="line"><span class="keyword">int</span> i;</div><div class="line"><span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2048</span>];</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">i = inputStream.read(buffer);</div><div class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">e.printStackTrace();</div><div class="line"><span class="comment">//i = -1时，下面for循环条件则不会成立。</span></div><div class="line">i = -<span class="number">1</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;i; j++)&#123;</div><div class="line">request.append((<span class="keyword">char</span>)buffer[j]);</div><div class="line">&#125;</div><div class="line">System.out.println(request.toString());</div><div class="line">uri = parseUri(request.toString());</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getUri</span><span class="params">()</span> </span>&#123;</div><div class="line"><span class="keyword">return</span> uri;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//获取Uri</span></div><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">parseUri</span><span class="params">(String requestString)</span></span>&#123;</div><div class="line"><span class="keyword">int</span> index1,index2;</div><div class="line">index1 = requestString.indexOf(<span class="string">' '</span>);</div><div class="line"><span class="keyword">if</span>(index1 != -<span class="number">1</span>)&#123;</div><div class="line">index2 = requestString.indexOf(<span class="string">' '</span>, index1 + <span class="number">1</span>);</div><div class="line"><span class="keyword">if</span>(index2 &gt; index1)&#123;</div><div class="line"><span class="keyword">return</span> requestString.substring(index1 + <span class="number">1</span>, index2);</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="封装相应"><a href="#封装相应" class="headerlink" title="封装相应"></a><strong>封装相应</strong></h2><p>这个返回Response的类，主要功能在sendStaticResource方法里。原理就是拼接HTTP Response相应。如果存在该文件，则读取文件内容，然后往OutputStream里面放；不存在的话，就返回一个404。</p>
-<p><font color="blue"><strong><em> 我的电脑是mac操作系统，在浏览器上测试会出现异常错误。原因还未知。故添加一个返回的相应头。 </em></strong></font><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"><span class="keyword">import</span> java.io.FileInputStream;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.OutputStream;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Created by laiwenqiang on 2017/5/16.</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Response</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BUFFER_SIZE = <span class="number">1024</span>;</div><div class="line"><span class="keyword">private</span> OutputStream output;</div><div class="line"><span class="keyword">private</span> Request request;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Response</span><span class="params">(OutputStream outputStream)</span> </span>&#123;</div><div class="line"><span class="keyword">this</span>.output = outputStream;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRequest</span><span class="params">(Request request)</span> </span>&#123;</div><div class="line"><span class="keyword">this</span>.request = request;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendStaticResource</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">FileInputStream fileInputStream = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[BUFFER_SIZE];</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line"><span class="comment">//获取request中的uri，找到对应的文件。</span></div><div class="line">File file = <span class="keyword">new</span> File(HttpServer.WEB_ROOT, request.getUri());</div><div class="line"><span class="keyword">if</span>(file.exists())&#123;</div><div class="line"></div><div class="line">fileInputStream = <span class="keyword">new</span> FileInputStream(file);</div><div class="line"></div><div class="line"><span class="comment">//源代码中没有下面这段话，导致请求可能会出现错误。现在添加。</span></div><div class="line">String msg = <span class="string">"HTTP/1.1 404 File Not Found\r\n"</span> +</div><div class="line"><span class="string">"Content-Type: text/html\r\n"</span> +</div><div class="line"><span class="string">"\r\n"</span>;</div><div class="line">output.write(msg.getBytes());</div><div class="line"><span class="keyword">while</span>(i != -<span class="number">1</span>)&#123;</div><div class="line">output.write(bytes, <span class="number">0</span>, i);</div><div class="line">i = fileInputStream.read(bytes, <span class="number">0</span>, BUFFER_SIZE);</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">//404错误</span></div><div class="line"><span class="keyword">else</span>&#123;</div><div class="line">String errorMessage = <span class="string">"HTTP/1.1 404 File Not Found\r\n"</span> +</div><div class="line"><span class="string">"Content-Type: text/html\r\n"</span> +</div><div class="line"><span class="string">"Content-Length: 23\r\n"</span> +</div><div class="line"><span class="string">"\r\n"</span> +</div><div class="line"><span class="string">"&lt;h1&gt; File Not Found!&lt;/h1&gt;"</span>;</div><div class="line">output.write(errorMessage.getBytes());</div><div class="line">&#125;</div><div class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">e.printStackTrace();</div><div class="line">&#125; <span class="keyword">finally</span>&#123;</div><div class="line"><span class="keyword">if</span>(fileInputStream != <span class="keyword">null</span>)&#123;</div><div class="line">fileInputStream.close();</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="创建文件index-html"><a href="#创建文件index-html" class="headerlink" title="创建文件index.html"></a><strong>创建文件index.html</strong></h2><p>现在需要新建一个文件夹webroot，并且在里面创建一个index.html文件，内容很简单：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Welcome to BrainySoftware<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">Welcome to BrainySoftware.</div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure></p>
-<p>运行后，在浏览器输入：localhost:8080/index.html，得到结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Welcome to BrainySoftware.</div></pre></td></tr></table></figure></p>
-<p>如果输入不存在的文件路径，会返回：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">File Not Found</div></pre></td></tr></table></figure></p>
-<hr>
-<p>一步一个脚印</p>
-<p>本章节完(<em>^__^</em>)</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
-                2017-06-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
-</blockquote>
-<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>构建了一个简单的Servlet容器，</p>
-<ol>
-<li>运用<code>javax.servlet.ServletRequest</code>和<code>javax.servlet.ServletResponse</code>，我们实现了自己的Request和Response。</li>
-<li>我们把请求划分为两类，一种是请求静态资源，读取文件后返回消息；</li>
-<li>另外一种是Servlet请求，包含业务逻辑。</li>
-<li>对于Servlet请求，我们的容器会调用该Servlet的service方法进行处理。</li>
-<li>值得注意的是，调用Servlet实例的时候，我们的容器会启用类加载机制动态的把Servlet类load进来，从而实例化它。</li>
-</ol>
-<hr>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>上节还有个尾巴，对于这个Servlet容器存在不安全的地方，下面详细改善。</p>
-<hr>
-<h1 id="不安全的地方"><a href="#不安全的地方" class="headerlink" title="不安全的地方"></a><strong>不安全的地方</strong></h1><p>在<code>HttpServer1.java</code>这个类里面。有这样一段代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	      servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">	      <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">	     servlet.service(request, response);</div><div class="line">	 &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	        e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>我们的代码会将编写好的Servlet加载进来，然后将Request和Response作为参数传递进去。</p>
-<p>我们在编写在Servlet的时候，可以接收到类型为<code>ServletRequest</code>和<code>ServletResponse</code>的实例（他们作为参数传递进来了）。即使如此，依旧可以把他们强制转化为<code>com.ex02.pyrmont.Request</code>和<code>com.ex02.pyrmont.Response</code>。这两个类里面有<code>parse</code>、<code>parseUri</code>、<code>sendStaticResource</code>，这些核心方法。所以在Servlet里面，能够很轻松地对这些方法进行调用。显然是不安全的。</p>
-<hr>
-<h1 id="改进方法"><a href="#改进方法" class="headerlink" title="改进方法"></a><strong>改进方法</strong></h1><h2 id="添加默认修饰符"><a href="#添加默认修饰符" class="headerlink" title="添加默认修饰符"></a><strong>添加默认修饰符</strong></h2><p>这个方法是，<br>让 <code>Request</code> 和<code>Response</code>类拥有默认访问修饰，所以它们不能在<code>ex02.pyrmont</code>包的外部使用。</p>
-<h2 id="使用Facade（外观）设计模式"><a href="#使用Facade（外观）设计模式" class="headerlink" title="使用Facade（外观）设计模式"></a><strong>使用Facade（外观）设计模式</strong></h2><p>书上说这种方式更为优雅，而上面那个更为简单。<br>但是我觉得，这种方式是在某些不能够更改源码的情况下，会显得很眼前一亮。</p>
-<p>主要的思路就是，</p>
-<ol>
-<li>创建RequestFacade，实现ServletRequest接口。</li>
-<li>创建ResponseFacade，实现ServletResponse接口。</li>
-<li>在Facade里面，持有对<code>Request/Response</code>的引用，并且设置为<strong>private</strong>的。</li>
-</ol>
-<p>这样，Servlet获取到的是Facade，无法对里面的<code>Request/Response</code>进行操作。</p>
-<h2 id="封装Request"><a href="#封装Request" class="headerlink" title="封装Request"></a><strong>封装Request</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.RequestDispatcher;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletInputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequest;</div><div class="line"><span class="keyword">import</span> java.io.BufferedReader;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</div><div class="line"><span class="keyword">import</span> java.util.Enumeration;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">*  Created by laiwenqiang on 2017/5/17.</div><div class="line">   */</div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestFacade</span> <span class="keyword">implements</span> <span class="title">ServletRequest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServletRequest request;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RequestFacade</span> <span class="params">(ServletRequest request)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.request = request;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getAttribute</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> request.getAttribute(s);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getAttributeNames</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> request.getAttributeNames();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//后面省略</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<h2 id="封装Response"><a href="#封装Response" class="headerlink" title="封装Response"></a><strong>封装Response</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletOutputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletResponse;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">*  Created by laiwenqiang on 2017/5/17.</div><div class="line">   */</div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseFacade</span> <span class="keyword">implements</span> <span class="title">ServletResponse</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServletResponse response = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResponseFacade</span><span class="params">(Response response)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.response = response;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getCharacterEncoding</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> response.getCharacterEncoding();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletOutputStream <span class="title">getOutputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">return</span> response.getOutputStream();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">   <span class="comment">//后面省略</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<h2 id="修改ServletProcessor"><a href="#修改ServletProcessor" class="headerlink" title="修改ServletProcessor"></a><strong>修改ServletProcessor</strong></h2><p>在调用Servlet的地方改为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//这里和ServletProcessor1不同，运用外观设计模式</span></div><div class="line">Servlet servlet = <span class="keyword">null</span>;</div><div class="line">RequestFacade requestFacade = <span class="keyword">new</span> RequestFacade(request);</div><div class="line">ResponseFacade responseFacade = <span class="keyword">new</span> ResponseFacade(response);</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">       servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">       <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">       servlet.service(requestFacade, responseFacade);</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="修改HttpServer"><a href="#修改HttpServer" class="headerlink" title="修改HttpServer"></a><strong>修改HttpServer</strong></h2><p>最后，将主程序调用<code>ServletProcessor1.java</code>的地方修改下即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(request.getUri().startsWith(<span class="string">"/servlet/"</span>)) &#123;</div><div class="line">                    <span class="comment">//启用相对安全的ServletProcessor2</span></div><div class="line">        ServletProcessor2 processor = <span class="keyword">new</span> ServletProcessor2();</div><div class="line">    	processor.process(request, response);</div><div class="line"></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">		StaticResourceProcessor processor = <span class="keyword">new</span> StaticResourceProcessor();</div><div class="line">		processor.process(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<hr>
-<p>一步一个脚印</p>
-<p>本章完成，(^__^)</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/mac下命令行启动mysql/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -749,94 +451,323 @@
       
         
           
-            <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
-</blockquote>
-<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>在上面一章节中，</p>
-<ol>
-<li>运用Socket和ServerSocket，</li>
-<li>并且在遵循HTTP协议的规范下，创建了一个简单的Web容器。</li>
-</ol>
-<font color="red"><strong>该容器的主要工作流程是，</strong></font>
+          
+这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
 
-<ol>
-<li>用ServerSocket创建服务端，启动8080端口监听请求，</li>
-<li>客户端一旦发送Socket请求，</li>
-<li>解析HTTP Request，获取URI路径。</li>
-<li>依据URI寻找资源，</li>
-<li>如果存在该资源，按照HTTP Response规范返回内容；</li>
-<li>如果不存在，按照HTTP Response规范返回404。</li>
-</ol>
-<p>这个容器还抽象出了Request和Response类，用来处理消息。然而，只能返回本地文件内容，不能做业务逻辑处理。并且，我们是用自己的HttpServer这个类来直接操作，显然不符合设计规范。因此，引入Servlet这个概念，用来处理业务逻辑。</p>
-<hr>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>本章节，主要通过两个程序来开发自己的Servlet容器。</p>
-<ol>
-<li>第一个简单，用于理解一个Servlet容器的工作原理。</li>
-<li>第二个稍微复杂。</li>
-</ol>
-<hr>
-<h1 id="javax-servlet-Servlet接口"><a href="#javax-servlet-Servlet接口" class="headerlink" title="javax.servlet.Servlet接口"></a><strong>javax.servlet.Servlet接口</strong></h1><p>谈到Servlet，自然就要运用到<code>javax.servlet.Servlet</code>接口。我们接下来用到的Servlet就要实现这个接口，该接口拥有五个方法。</p>
-<ol>
-<li><code>public void init(ServletConfig config) throws ServletException</code></li>
-<li><code>public void service(ServletRequest request, ServletResponse response) 
- throws ServletException, java.io.IOException</code></li>
-<li><code>public void destroy()</code></li>
-<li><code>public ServletConfig getServletConfig()</code></li>
-<li><code>public java.lang.String getServletInfo()</code></li>
-</ol>
-<h2 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a><strong>Servlet生命周期</strong></h2><p>一个老生常谈的话题了。<br>简要来说，就是：<font color="red">init初始化 —&gt; service处理请求 —&gt; destroy销毁。</font></p>
-<p>在处理service请求的时候，<strong>Servlet容器</strong>会传递一个<code>javax.servlet.ServletRequest</code>对象和 <code>javax.servlet.ServletResponse</code> 对象，用来处理请求和相应。在一个Servlet生命周期里，service方法会被多次调用。</p>
-<p>当从服务器中移除一个Servlet实例的时候，会调用destroy方法。<br>这通常发生在 servlet 容器正在被关闭或者 servlet 容器需要一些空闲内存的时候。</p>
-<p>具体点，就是：</p>
-<font color="red"><br>1. 客户端发送对某个Servlet的请求，<br>2. 如果服务器里没有该Servlet实例，会调用该Servlet的init方法进行初始化；<br>3. 如果有，init方法不被调用。<br>4. 处理请求，调用service方法。返回结果。<br>5. 如果Servlet容器（服务器）被关闭，或者内存不足，会调用Servlet的destroy方法。<br>   </font>
+上节回顾在上面一章节中，
 
-<p>这里的PrimitiveServlet类，就是一个很简单的Servlet实例。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.*;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/17.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PrimitiveServlet</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">        System.out.println(<span class="string">"init"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line">        System.out.println(<span class="string">"from service"</span>);</div><div class="line">        PrintWriter out = servletResponse.getWriter();</div><div class="line">		</div><div class="line">        <span class="comment">//由于浏览器无法解析出相应，故添加如下一段代码。原因未知。</span></div><div class="line">        String msg = <span class="string">"HTTP/1.1 200 OK\r\n"</span> +</div><div class="line">                <span class="string">"Content-Type: text/html\r\n"</span> +</div><div class="line">                <span class="string">"\r\n"</span>;</div><div class="line">        out.write(msg);</div><div class="line">        </div><div class="line">        out.write(<span class="string">"Hello. Rose are red."</span>);</div><div class="line">        out.write(<span class="string">"Violets are blue."</span>);</div><div class="line">		out.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"destroy"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<hr>
-<h1 id="Servlet容器的工作内容"><a href="#Servlet容器的工作内容" class="headerlink" title="Servlet容器的工作内容"></a><strong>Servlet容器的工作内容</strong></h1><p>对Servlet的操作需要由Servlet容器来完成。<font color="red">Servlet容器的工作内容（和Servlet的生命周期是对应的），</font></p>
-<ol>
-<li>当第一次调用Servlet的时候，加载该Servlet并调用init方法。</li>
-<li>对每次请求，都会构造一个<code>javax.servlet.ServletRequest</code>和<code>javax.servlet.ServletResponse</code>。</li>
-<li>调用Servlet的service方法，同时传递ServletRequest和ServletResponse对象。</li>
-<li>当Servlet类被关闭的时候，调用destroy方法并且卸载Servlet类。</li>
-</ol>
-<h1 id="Servlet容器的简单版本01"><a href="#Servlet容器的简单版本01" class="headerlink" title="Servlet容器的简单版本01"></a><strong>Servlet容器的简单版本01</strong></h1><p>现在创建的这个容器相对简单，很简单。没有实现Servlet容器的所有工作。</p>
-<p><font color="blue">我们会发现，它和第一章实现的web服务器很类似，不过现在能够处理本地文件和Servlet。</font>内容是，</p>
-<ol>
-<li>等待HTTP请求。</li>
-<li>构造一个ServletRequest和ServletResponse对象。</li>
-<li>如果请求的是一个静态资源（本地文件），调用StaticResourceProcessor实例的process 方法，同时传递 ServletRequest 和 ServletResponse 对象。</li>
-<li>如果请求一个Servlet的话，加载Servlet类并调用service方法，同时传递 ServletRequest 和 ServletResponse 对象。</li>
-</ol>
-<p>在这个容器中，每次请求Servlet的时候，都会加载Servlet。（真实情况是只会加载一次）</p>
-<h2 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a><strong>创建容器</strong></h2><p>和之前的区别就是增加了对请求的判断，</p>
-<ol>
-<li>如果URI是以<code>/servlet/</code>开头，则会加载相应的Servlet，调用相应的service方法。</li>
-<li>如果不是，表示请求的是静态资源，读取内容后直接方法。</li>
-</ol>
-<p>处理请求的时候，都会传递Request和Response给对应的处理方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.io.OutputStream;</div><div class="line"><span class="keyword">import</span> java.net.InetAddress;</div><div class="line"><span class="keyword">import</span> java.net.ServerSocket;</div><div class="line"><span class="keyword">import</span> java.net.Socket;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/17.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpServer1</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SHUTDOWN_COMMAND = <span class="string">"/SHUTDOWN"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> shutdown = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        HttpServer1 server = <span class="keyword">new</span> HttpServer1();</div><div class="line">        server.await();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">await</span><span class="params">()</span> </span>&#123;</div><div class="line">        ServerSocket serverSocket = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">int</span> port = <span class="number">8080</span>;</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            serverSocket = <span class="keyword">new</span> ServerSocket(port, <span class="number">1</span>, InetAddress.getByName(<span class="string">"127.0.0.1"</span>));</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            System.exit(<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">while</span> (!shutdown) &#123;</div><div class="line">            Socket socket = <span class="keyword">null</span>;</div><div class="line">            InputStream inputStream = <span class="keyword">null</span>;</div><div class="line">            OutputStream outputStream = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                socket = serverSocket.accept();</div><div class="line">                inputStream = socket.getInputStream();</div><div class="line">                outputStream = socket.getOutputStream();</div><div class="line"></div><div class="line">                Request request = <span class="keyword">new</span> Request(inputStream);</div><div class="line">                request.parse();</div><div class="line">                Response response = <span class="keyword">new</span> Response(outputStream);</div><div class="line">                response.setRequest(request);</div><div class="line"></div><div class="line">                <span class="keyword">if</span>(request.getUri().startsWith(<span class="string">"/servlet/"</span>)) &#123;</div><div class="line">                    ServletProcessor1 processor = <span class="keyword">new</span> ServletProcessor1();</div><div class="line">                    processor.process(request, response);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    StaticResourceProcessor processor = <span class="keyword">new</span> StaticResourceProcessor();</div><div class="line">                    processor.process(request, response);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                socket.close();</div><div class="line">                shutdown = request.getUri().equals(SHUTDOWN_COMMAND);</div><div class="line"></div><div class="line"></div><div class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">                System.exit(<span class="number">1</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="创建请求Request"><a href="#创建请求Request" class="headerlink" title="创建请求Request"></a><strong>创建请求Request</strong></h2><p>和之前的主要区别就是，</p>
-<ol>
-<li>实现了<code>ServletRequest</code>接口。<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.RequestDispatcher;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletInputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequest;</div><div class="line"><span class="keyword">import</span> java.io.BufferedReader;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</div><div class="line"><span class="keyword">import</span> java.util.Enumeration;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/17.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> <span class="keyword">implements</span> <span class="title">ServletRequest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> InputStream inputStream;</div><div class="line">    <span class="keyword">private</span> String uri;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Request</span><span class="params">(InputStream inputStream)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.inputStream = inputStream;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUri</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> uri;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">parse</span><span class="params">()</span> </span>&#123;</div><div class="line">        StringBuilder request = <span class="keyword">new</span> StringBuilder(<span class="number">2048</span>);</div><div class="line">        <span class="keyword">int</span> i;</div><div class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2048</span>];</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            i = inputStream.read(buffer);</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            <span class="comment">//i = -1时，下面for循环条件则不会成立。</span></div><div class="line">            i = -<span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;i; j++)&#123;</div><div class="line">            request.append((<span class="keyword">char</span>)buffer[j]);</div><div class="line">        &#125;</div><div class="line">        System.out.println(request.toString());</div><div class="line">        uri = parseUri(request.toString());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//获取Uri</span></div><div class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">parseUri</span><span class="params">(String requestString)</span></span>&#123;</div><div class="line">        <span class="keyword">int</span> index1,index2;</div><div class="line">        index1 = requestString.indexOf(<span class="string">' '</span>);</div><div class="line">        <span class="keyword">if</span>(index1 != -<span class="number">1</span>)&#123;</div><div class="line">            index2 = requestString.indexOf(<span class="string">' '</span>, index1 + <span class="number">1</span>);</div><div class="line">            <span class="keyword">if</span>(index2 &gt; index1)&#123;</div><div class="line">                <span class="keyword">return</span> requestString.substring(index1 + <span class="number">1</span>, index2);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getAttribute</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getAttributeNames</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getCharacterEncoding</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCharacterEncoding</span><span class="params">(String s)</span> <span class="keyword">throws</span> UnsupportedEncodingException </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getContentLength</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getContentType</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletInputStream <span class="title">getInputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getParameter</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getParameterNames</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">public</span> String[] getParameterValues(String s) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[<span class="number">0</span>];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Map <span class="title">getParameterMap</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getProtocol</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getScheme</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServerName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getServerPort</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> BufferedReader <span class="title">getReader</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRemoteAddr</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRemoteHost</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAttribute</span><span class="params">(String s, Object o)</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeAttribute</span><span class="params">(String s)</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Locale <span class="title">getLocale</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getLocales</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isSecure</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> RequestDispatcher <span class="title">getRequestDispatcher</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRealPath</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="创建相应Response"><a href="#创建相应Response" class="headerlink" title="创建相应Response"></a><strong>创建相应Response</strong></h2><p>和Request类似。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletOutputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletResponse;</div><div class="line"><span class="keyword">import</span> java.io.*;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/17.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Response</span> <span class="keyword">implements</span> <span class="title">ServletResponse</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BUFFER_SIZE = <span class="number">1024</span>;</div><div class="line">    Request request;</div><div class="line">    OutputStream output;</div><div class="line">    PrintWriter writer;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Response</span><span class="params">(OutputStream output)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.output = output;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRequest</span><span class="params">(Request request)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.request = request;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* This method is used to serve a static page */</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendStaticResource</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[BUFFER_SIZE];</div><div class="line">        FileInputStream fis = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">      <span class="comment">/* request.getUri has been replaced by request.getRequestURI */</span></div><div class="line">            File file = <span class="keyword">new</span> File(Constants.WEB_ROOT, request.getUri());</div><div class="line">            fis = <span class="keyword">new</span> FileInputStream(file);</div><div class="line">      <span class="comment">/*</span></div><div class="line">         HTTP Response = Status-Line</div><div class="line">           *(( general-header | response-header | entity-header ) CRLF)</div><div class="line">           CRLF</div><div class="line">           [ message-body ]</div><div class="line">         Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF</div><div class="line">      */</div><div class="line">            <span class="keyword">int</span> ch = fis.read(bytes, <span class="number">0</span>, BUFFER_SIZE);</div><div class="line"></div><div class="line">            <span class="comment">//源代码中没有下面这段话，导致请求会出现错误。现在添加。</span></div><div class="line">            String msg = <span class="string">"HTTP/1.1 200 OK\r\n"</span> +</div><div class="line">                    <span class="string">"Content-Type: text/html\r\n"</span> +</div><div class="line">                    <span class="string">"\r\n"</span>;</div><div class="line">            output.write(msg.getBytes());</div><div class="line"></div><div class="line">            <span class="keyword">while</span> (ch!=-<span class="number">1</span>) &#123;</div><div class="line">                output.write(bytes, <span class="number">0</span>, ch);</div><div class="line">                ch = fis.read(bytes, <span class="number">0</span>, BUFFER_SIZE);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">catch</span> (FileNotFoundException e) &#123;</div><div class="line">            String errorMessage = <span class="string">"HTTP/1.1 404 File Not Found\r\n"</span> +</div><div class="line">                    <span class="string">"Content-Type: text/html\r\n"</span> +</div><div class="line">                    <span class="string">"Content-Length: 23\r\n"</span> +</div><div class="line">                    <span class="string">"\r\n"</span> +</div><div class="line">                    <span class="string">"&lt;h1&gt;File Not Found&lt;/h1&gt;"</span>;</div><div class="line">            output.write(errorMessage.getBytes());</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">if</span> (fis!=<span class="keyword">null</span>)</div><div class="line">                fis.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/** implementation of ServletResponse  */</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">flushBuffer</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getBufferSize</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getCharacterEncoding</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Locale <span class="title">getLocale</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletOutputStream <span class="title">getOutputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> PrintWriter <span class="title">getWriter</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="comment">// autoflush is true, println() will flush,</span></div><div class="line">        <span class="comment">// but print() will not.</span></div><div class="line">        writer = <span class="keyword">new</span> PrintWriter(output, <span class="keyword">true</span>);</div><div class="line">        <span class="keyword">return</span> writer;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isCommitted</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resetBuffer</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBufferSize</span><span class="params">(<span class="keyword">int</span> size)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentLength</span><span class="params">(<span class="keyword">int</span> length)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentType</span><span class="params">(String type)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLocale</span><span class="params">(Locale locale)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="对静态资源的处理"><a href="#对静态资源的处理" class="headerlink" title="对静态资源的处理"></a><strong>对静态资源的处理</strong></h2><p>这里封装了一个类，调用Response里对静态资源处理的方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/17.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticResourceProcessor</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Request request, Response response)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            response.sendStaticResource();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="对Servlet的处理"><a href="#对Servlet的处理" class="headerlink" title="对Servlet的处理"></a><strong>对Servlet的处理</strong></h2><p>这里的处理流程是，</p>
-<ol>
-<li>解析URI，获取ServletName。</li>
-<li>运用类加载机制，从对应的目录下load进所需的Servlet。</li>
-<li>调用该Servlet的service方法，返回消息。</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.Servlet;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletException;</div><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.net.URL;</div><div class="line"><span class="keyword">import</span> java.net.URLClassLoader;</div><div class="line"><span class="keyword">import</span> java.net.URLStreamHandler;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/16.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletProcessor1</span> </span>&#123;</div><div class="line">    <span class="comment">//接收request，处理业务后，返回response</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Request request, Response response)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//1. 获取Servlet的名字</span></div><div class="line"></div><div class="line">        String uri = request.getUri();</div><div class="line">        <span class="comment">// 将“/servlet/servletName” 转化为： “servletName”</span></div><div class="line">        String servletName = uri.substring(uri.lastIndexOf(<span class="string">"/"</span> ) + <span class="number">1</span>);</div><div class="line"></div><div class="line">        <span class="comment">//2. 使用类加载器加载Servlet</span></div><div class="line"></div><div class="line">        URLClassLoader loader = <span class="keyword">null</span>;</div><div class="line">        URL[] urls = <span class="keyword">new</span> URL[<span class="number">1</span>];</div><div class="line">        URLStreamHandler handler = <span class="keyword">null</span>;</div><div class="line">        File classPath = <span class="keyword">new</span> File(Constants.WEB_ROOT);</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            String repository = (<span class="keyword">new</span> URL(<span class="string">"file"</span>, <span class="keyword">null</span>, classPath.getCanonicalPath() +</div><div class="line">                    File.separator)).toString();</div><div class="line">            urls[<span class="number">0</span>] = <span class="keyword">new</span> URL(<span class="keyword">null</span>, repository, handler);</div><div class="line">            loader = <span class="keyword">new</span> URLClassLoader(urls);</div><div class="line"></div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Class myClass = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            myClass = loader.loadClass(servletName);</div><div class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Servlet servlet = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">            <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">            servlet.service(request, response);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a><strong>工具类</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by laiwenqiang on 2017/5/17.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Constants</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String WEB_ROOT = System.getProperty(<span class="string">"user.dir"</span>) + File.separator + <span class="string">"webroot"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<hr>
-<p>现在，这个容器已经完成。<br>在浏览器中输入入：<a href="http://www.localhost.com:8080/servlet/PrimitiveServlet，得到结果：" target="_blank" rel="external">http://www.localhost.com:8080/servlet/PrimitiveServlet，得到结果：</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Hello. Rose are red.Violets are blue.</div></pre></td></tr></table></figure></p>
-<p>输入：<a href="http://localhost:8080/index.html，得到结果：" target="_blank" rel="external">http://localhost:8080/index.html，得到结果：</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Welcome to BrainySoftware.</div></pre></td></tr></table></figure></p>
-<hr>
-<p>一步一个脚印</p>
-<p>本章未完成，待续(^__^)</p>
+运用Socket和ServerSocket，
+并且在遵循HTTP协议的规范下，创建了一个简单的Web容器。
+
+该容器的主要工作流程是，
+
+
+用ServerSocket创建服务端，启动8080端口监听请求，
+客户端一旦发送Socket请求，
+解析HTTP Request，获取URI路径。
+依据URI寻找资源，
+如果存在该资源，按照HTTP Response规范返回内容；
+如果不存在，按照HTTP Response规范返回404。
+
+这个容器还抽象出了Request和Response类，用来处理消息。然而，只能返回本地文件内容，不能做业务逻辑处理。并且，我们是用自己的HttpServer这个类来直接操作，显然不符合设计规范。因此，引入Servlet这个概念，用来处理业务逻辑。
+
+概要本章节，主要通过两个程序来开发自己的Servlet容器。
+
+第一个简单，用于理解一个Servlet容器的工作原理。
+第二个稍微复杂。
+
+
+javax.servlet.Servlet接口谈到Servlet，自然就要运用到javax.servlet.Servlet接口。我们接下来用到的Servlet就要实现这个接口，该接口拥有五个方法。
+
+public void init(ServletConfig config) throws ServletException
+public void service(ServletRequest request, ServletResponse response) 
+ throws ServletException, java.io.IOException
+public void destroy()
+public ServletConfig getServletConfig()
+public java.lang.String getServletInfo()
+
+Servlet生命周期一个老生常谈的话题了。简要来说，就是：init初始化 —&gt; service处理请求 —&gt; destroy销毁。
+在处理
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
 
           
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          
+这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
+
+上节回顾构建了一个简单的Servlet容器，
+
+运用javax.servlet.ServletRequest和javax.servlet.ServletResponse，我们实现了自己的Request和Response。
+我们把请求划分为两类，一种是请求静态资源，读取文件后返回消息；
+另外一种是Servlet请求，包含业务逻辑。
+对于Servlet请求，我们的容器会调用该Servlet的service方法进行处理。
+值得注意的是，调用Servlet实例的时候，我们的容器会启用类加载机制动态的把Servlet类load进来，从而实例化它。
+
+
+概要上节还有个尾巴，对于这个Servlet容器存在不安全的地方，下面详细改善。
+
+不安全的地方在HttpServer1.java这个类里面。有这样一段代码：123456789try &#123;	      servlet = (Servlet) myClass.newInstance();	      //3. 调用Servlet的service方法	     servlet.service(request, response);	 &#125; catch (Exception e) &#123;	        e.printStackTrace();&#125;
+我们的代码会将编写好的Servlet加载进来，然后将Request和Response作为参数传递进去。
+我们在编写在Servlet的时候，可以接收到类型为ServletRequest和ServletResponse的实例（他们作为参数传递进来了）。即使如此，依旧可以把他们强制转化为com.ex02.pyrmont.Request和com.ex02.pyrmont.Response。这两个类里面有parse、parseUri、sendStaticResource，这些核心方法。所以在Servlet里面，能够很轻松地对这些方法进行调用。显然是不安全的。
+
+改进方法添加默认修饰符这个方法是，让 Request 和Response类拥有默认访问修饰
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/" itemprop="url">《How Tomcat Works》 笔记01 一个简单的Web容器</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          
+这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
+
+本章节，简要介绍HTTP协议，并且实现一个简陋的web服务器。主要运用到java.net.Socket和java.net.ServerSocket，并且通过Http消息和客户端进行通信。
+
+HTTP协议（基本上是书上的概念搬过来。）
+HTTP Request一个HTTP请求，包含三部分：
+
+Method–URI–Protocol/version
+Request headers
+Entity body
+
+例如：1234567POST /examples/default.jsp HTTP/1.1 Accept: text/plain; text/html Accept-Language: en-gbConnection: Keep-AliveHost: localhostUser-Agent: Mozilla/4.0 (compatible; MSIE 4.01; Windows 98) Content-Length: 33Content-Type: application/x-www-form-urlencoded Accept-Encoding: gzip, deflatelastName=Franks&amp;firstName=Michael
+请求方法包括：GET、POST、HEAD、OPTIONS、PUT、DELETE 和 TRACE。
+URI 指明了请求资源的地址，通常是从网站更目录开始计算的一个相对路径，因此它总是以斜线“ /”开头的。URL 实际上是 URI 的一种类型。
+请求头(header)中包含了一些关于客户端环境和请求实体(entity)的有用的信息。例如，客户端浏览器所使用的语言，请求实体信息的长度等。每个请求头使用 CRLF(回车换行符，“\r\n”)分隔。
+注意请求头的格式:请求头名+英文空格+请求头值
+请求头和请求实体之间有一个空白行(CRLF)。这是 HTTP 协议规定的格式。HTTP 服务器，以此确定请求实体是从哪里开始的。
+上面的例子中，请求实体是:1lastName=Franks&amp;firstName=
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -946,42 +877,45 @@
       
         
           
-            <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。<br>所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
-</blockquote>
-<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>解析了<code>HttpProcessor</code>类的主要方法。</p>
-<ol>
-<li><code>await</code>和<code>assign</code>方法，用于线程的等待，和接收请求的作用。</li>
-<li><code>process</code>方法，处理请求。</li>
-</ol>
-<p>同时，我们还自己实现了一个简单的Container容器。</p>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>本章节探讨容器。</p>
-<p>容器是一个处理用户请求并返回对象给web用户的模块。</p>
-<p>在接口<code>org.apache.catalina.Container</code>中，定义了四种容器的形式：Engine（引擎），Host（主机），Context（上下文），Wrapper（包装器）。</p>
-<p>本章节介绍Context和Wrapper。</p>
-<h1 id="接口容器"><a href="#接口容器" class="headerlink" title="接口容器"></a>接口容器</h1><p>一个容 器必须实现<code>org.apache.catalina.Container</code>接口。</p>
-<p>调用流程是：</p>
-<ol>
-<li>通过Connector的setContainer方法，将容器传递进去。</li>
-<li>Connector会调用容器的<code>invoke</code>方法。</li>
-</ol>
-<h2 id="四种不同的容器"><a href="#四种不同的容器" class="headerlink" title="四种不同的容器"></a>四种不同的容器</h2><p>他们分别是：</p>
-<ol>
-<li>Engine（引擎），表示整个Catalina的Servlet引擎。</li>
-<li>Host（主机），表示一个拥有多个上下文的虚拟主机。</li>
-<li>Context（上下文），表示一个Web应用，一个Context包含一个多多个Wrapper。</li>
-<li>Wrapper（包装器），表示一个独立的Servlet。</li>
-</ol>
-<p>他们的标准实现是：StandardEngine，StandardHost，StandardContext，StandardWrapper。他们都扩展于抽象类CantainerBase类。都是<code>org.apache.catalina.core</code>包的一部分。</p>
-<h2 id="层次关系"><a href="#层次关系" class="headerlink" title="层次关系"></a>层次关系</h2><p>一个容器可以有一个或者多个低层次上的子容器。</p>
-<p>例如一个Context有一个卡或者多个Wrapper，而Wrapper是容器中层次最低的，所有它不能包含子容器。</p>
-<h1 id="Pipelining-Tasks（流水线任务）"><a href="#Pipelining-Tasks（流水线任务）" class="headerlink" title="Pipelining Tasks（流水线任务）"></a>Pipelining Tasks（流水线任务）</h1><p>这里介绍Connector调用容器的invoke方法后做的工作。然后谈论<code>org.apache.catalina</code>中四个相关的接口：Pipeline，Valve，ValveContext，和Contained。</p>
-<p><strong>一个流水线（Pipeline）包含了该容器要唤醒的所有阀门（Valve）。</strong></p>
-<p>每个阀门表示一个特定的任务。每个容器的流水线有一个基本的阀门，但是可以添加。可以通过配置文件server.xml来动态添加。</p>
-<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><hr>
-<p>一步一个脚印<br>本章完成，(^__^)</p>
-
           
+这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
+
+上节回顾解析了HttpProcessor类的主要方法。
+
+await和assign方法，用于线程的等待，和接收请求的作用。
+process方法，处理请求。
+
+同时，我们还自己实现了一个简单的Container容器。
+概要本章节探讨容器。
+容器是一个处理用户请求并返回对象给web用户的模块。
+在接口org.apache.catalina.Container中，定义了四种容器的形式：Engine（引擎），Host（主机），Context（上下文），Wrapper（包装器）。
+本章节介绍Context和Wrapper。
+接口容器一个容 器必须实现org.apache.catalina.Container接口。
+调用流程是：
+
+通过Connector的setContainer方法，将容器传递进去。
+Connector会调用容器的invoke方法。
+
+四种不同的容器他们分别是：
+
+Engine（引擎），表示整个Catalina的Servlet引擎。
+Host（主机），表示一个拥有多个上下文的虚拟主机。
+Context（上下文），表示一个Web应用，一个Context包含一个多多个Wrapper。
+Wrapper（包装器），表示一个独立的Servlet。
+
+他们的标准实现是：StandardEngine，StandardHost，StandardContext，StandardWrapper。他们都扩展于抽象类CantainerBase类。都是org.apache.catalina.core包的一部分。
+层次关系一个容器可以有一个或者多个低层次上的子容器。
+例如一个Context有一个卡或者多个Wrapper，而Wrapper是容器中层次最低的，所有它不能包含子容器。
+Pipelining Tasks（流水线任务）这里介绍Connector调用容器的invoke方法后做的工作。然后谈论org.apache.catalina中四个相关的接口：Pipeline，Valve，ValveContext，和Contained。
+一个流水线（Pipeline
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
