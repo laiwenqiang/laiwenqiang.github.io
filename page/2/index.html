@@ -271,165 +271,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/" itemprop="url">《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
-                2017-06-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tomcat/" itemprop="url" rel="index">
-                    <span itemprop="name">tomcat</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          
-这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
-
-上节回顾剖析了Tomcat的HttpConnector类。
-工作原理梗概如下：
-
-用工厂模式创建出ServerSocket。
-创建特定数量的HttpProcessor对象池，用于处理Socket请求；
-同时，会启动HttpProcessor线程。由于没有请求，所以所有的HttpProcessor都会阻塞在那里。
-调用HttpConnector的run方法，等待Socket请求。
-当请求来临，从对象池中pop出一个HttpProcessor实例。
-调用HttpProcessor的assign方法，将Socket实例传递给HttpProcessor；
-并且，唤醒在HttpProcessor中被阻塞的线程，用于处理Socket请求。
-
-概要这里会主要关注HttpProcessor异步处理请求的方法。
-HttpProcessor类在前几个章节中，我们自己写的处理请求的代码是同步的。他必须等待处理完process方法，才能接收新的Socket。
-123456789101112131415public void run() &#123;    ...    while (!stopped) &#123;        Socket socket = null;        try &#123;			socket = serversocket.accept();         &#125;        catch (Exception e) &#123;            continue;		&#125;		// Hand this socket off to an Httpprocessor       HttpProcessor processor = new Httpprocessor(this); 	   processor.process(socket);	&#125; &#125;
-而Tomcat中，这是异步的。
-run方法它的逻辑是，接收Socket，然后处理请求，最后将HttpConnector实例放回到对象池中。
-1234567
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记06--容器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -555,6 +396,165 @@ Pipelining Tasks（流水线任务）这里介绍Connector调用容器的invoke�
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/" itemprop="url">《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index">
+                    <span itemprop="name">tomcat</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          
+这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
+
+上节回顾剖析了Tomcat的HttpConnector类。
+工作原理梗概如下：
+
+用工厂模式创建出ServerSocket。
+创建特定数量的HttpProcessor对象池，用于处理Socket请求；
+同时，会启动HttpProcessor线程。由于没有请求，所以所有的HttpProcessor都会阻塞在那里。
+调用HttpConnector的run方法，等待Socket请求。
+当请求来临，从对象池中pop出一个HttpProcessor实例。
+调用HttpProcessor的assign方法，将Socket实例传递给HttpProcessor；
+并且，唤醒在HttpProcessor中被阻塞的线程，用于处理Socket请求。
+
+概要这里会主要关注HttpProcessor异步处理请求的方法。
+HttpProcessor类在前几个章节中，我们自己写的处理请求的代码是同步的。他必须等待处理完process方法，才能接收新的Socket。
+123456789101112131415public void run() &#123;    ...    while (!stopped) &#123;        Socket socket = null;        try &#123;			socket = serversocket.accept();         &#125;        catch (Exception e) &#123;            continue;		&#125;		// Hand this socket off to an Httpprocessor       HttpProcessor processor = new Httpprocessor(this); 	   processor.process(socket);	&#125; &#125;
+而Tomcat中，这是异步的。
+run方法它的逻辑是，接收Socket，然后处理请求，最后将HttpConnector实例放回到对象池中。
+1234567
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>

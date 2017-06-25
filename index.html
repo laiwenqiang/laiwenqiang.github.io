@@ -420,7 +420,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="laiwenqiang">
@@ -439,7 +439,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" itemprop="url">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</a></h1>
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
         
 
         <div class="post-meta">
@@ -513,41 +513,26 @@
           
 这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
 
-上节回顾我们创建了一个connector连接器。
+上节回顾构建了一个简单的Servlet容器，
 
-将之前的程序更加模块化，
-同时解析了HTTP请求，将这些信息封装到HttpRequest，这样Servlet就能够获取到这些信息了。
+运用javax.servlet.ServletRequest和javax.servlet.ServletResponse，我们实现了自己的Request和Response。
+我们把请求划分为两类，一种是请求静态资源，读取文件后返回消息；
+另外一种是Servlet请求，包含业务逻辑。
+对于Servlet请求，我们的容器会调用该Servlet的service方法进行处理。
+值得注意的是，调用Servlet实例的时候，我们的容器会启用类加载机制动态的把Servlet类load进来，从而实例化它。
 
-上一章节的主要工作在于解析HTTP请求上。
-概要主要剖析tomcat的 HttpConnector 和 HttpProcessor 的源代码。
-连接器一个 Tomcat 连接器必须符合以下条件:
 
-必须实现接口org.apache.catalina.Connector。
-必须创建请求对象，该请求对象的类必须实现接口org.apache.catalina.Request。
-必须创建响应对象，该响应对象的类必须实现接口 org.apache.catalina.Response。
+概要上节还有个尾巴，对于这个Servlet容器存在不安全的地方，下面详细改善。
 
-Connector接口指的是org.apache.catalina.Connector，在这个接口里，最重要的方法是，
+不安全的地方在HttpServer1.java这个类里面。有这样一段代码：123456789try &#123;	      servlet = (Servlet) myClass.newInstance();	      //3. 调用Servlet的service方法	     servlet.service(request, response);	 &#125; catch (Exception e) &#123;	        e.printStackTrace();&#125;
+我们的代码会将编写好的Servlet加载进来，然后将Request和Response作为参数传递进去。
+我们在编写在Servlet的时候，可以接收到类型为ServletRequest和ServletResponse的实例（他们作为参数传递进来了）。即使如此，依旧可以把他们强制转化为com.ex02.pyrmont.Request和com.ex02.pyrmont.Response。这两个类里面有parse、parseUri、sendStaticResource，这些核心方法。所以在Servlet里面，能够很轻松地对这些方法进行调用。显然是不安全的。
 
-getContainer 返回一个容器。
-setContainer 设置一个容器。
-createRequest 为前来的 HTTP 请求构造一个请求对象。
-createResponse 创建一个响应对象。
-
-Connector有很多实现，org.apache.catalina.connector.http.HttpConnector是其中一个。
-HttpConnector类这个类实现的接口有，Connector、Runnable和Lifecycle。org.apache.catalina.Lifecycle用于维护生命周期。
-在前几章节，我们也实现了自己的HttpConnector类，现在来看一下它和Tomcat的有何不同。
-
-创建ServerSocket方式不同；
-维护HttpProcessor对象池；
-处理HTTP不同。
-
-创建ServerSocket入口是initialize方法，会判断是否已经初始化过，没有的话就调用open方法。
-initialize的主要代码如下：
-123456789101112//...if (initialized)          
+改进方法添加默认修饰符这个方法是，让 Request 和Response类拥有默认访问修饰
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/#more" rel="contents">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -751,164 +736,6 @@ URI 指明了请求资源的地址，通常是从网站更目录开始计算的�
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
-                2017-06-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tomcat/" itemprop="url" rel="index">
-                    <span itemprop="name">tomcat</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          
-这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
-
-上节回顾构建了一个简单的Servlet容器，
-
-运用javax.servlet.ServletRequest和javax.servlet.ServletResponse，我们实现了自己的Request和Response。
-我们把请求划分为两类，一种是请求静态资源，读取文件后返回消息；
-另外一种是Servlet请求，包含业务逻辑。
-对于Servlet请求，我们的容器会调用该Servlet的service方法进行处理。
-值得注意的是，调用Servlet实例的时候，我们的容器会启用类加载机制动态的把Servlet类load进来，从而实例化它。
-
-
-概要上节还有个尾巴，对于这个Servlet容器存在不安全的地方，下面详细改善。
-
-不安全的地方在HttpServer1.java这个类里面。有这样一段代码：123456789try &#123;	      servlet = (Servlet) myClass.newInstance();	      //3. 调用Servlet的service方法	     servlet.service(request, response);	 &#125; catch (Exception e) &#123;	        e.printStackTrace();&#125;
-我们的代码会将编写好的Servlet加载进来，然后将Request和Response作为参数传递进去。
-我们在编写在Servlet的时候，可以接收到类型为ServletRequest和ServletResponse的实例（他们作为参数传递进来了）。即使如此，依旧可以把他们强制转化为com.ex02.pyrmont.Request和com.ex02.pyrmont.Response。这两个类里面有parse、parseUri、sendStaticResource，这些核心方法。所以在Servlet里面，能够很轻松地对这些方法进行调用。显然是不安全的。
-
-改进方法添加默认修饰符这个方法是，让 Request 和Response类拥有默认访问修饰
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1040,6 +867,179 @@ Servlet生命周期一个老生常谈的话题了。简要来说，就是：init
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" itemprop="url">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index">
+                    <span itemprop="name">tomcat</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          
+这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O
+
+上节回顾我们创建了一个connector连接器。
+
+将之前的程序更加模块化，
+同时解析了HTTP请求，将这些信息封装到HttpRequest，这样Servlet就能够获取到这些信息了。
+
+上一章节的主要工作在于解析HTTP请求上。
+概要主要剖析tomcat的 HttpConnector 和 HttpProcessor 的源代码。
+连接器一个 Tomcat 连接器必须符合以下条件:
+
+必须实现接口org.apache.catalina.Connector。
+必须创建请求对象，该请求对象的类必须实现接口org.apache.catalina.Request。
+必须创建响应对象，该响应对象的类必须实现接口 org.apache.catalina.Response。
+
+Connector接口指的是org.apache.catalina.Connector，在这个接口里，最重要的方法是，
+
+getContainer 返回一个容器。
+setContainer 设置一个容器。
+createRequest 为前来的 HTTP 请求构造一个请求对象。
+createResponse 创建一个响应对象。
+
+Connector有很多实现，org.apache.catalina.connector.http.HttpConnector是其中一个。
+HttpConnector类这个类实现的接口有，Connector、Runnable和Lifecycle。org.apache.catalina.Lifecycle用于维护生命周期。
+在前几章节，我们也实现了自己的HttpConnector类，现在来看一下它和Tomcat的有何不同。
+
+创建ServerSocket方式不同；
+维护HttpProcessor对象池；
+处理HTTP不同。
+
+创建ServerSocket入口是initialize方法，会判断是否已经初始化过，没有的话就调用open方法。
+initialize的主要代码如下：
+123456789101112//...if (initialized)          
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
