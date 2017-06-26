@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记06--容器/index.html">
 <meta property="og:site_name" content="laiwenqiang">
 <meta property="og:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾解析了HttpProcessor类的主要方法。  await和assign方法，用于线程的等待，和接收请求的作用。 process方法，处理请求。  同时，我们还自己">
-<meta property="og:updated_time" content="2017-06-25T08:16:13.000Z">
+<meta property="og:updated_time" content="2017-06-26T15:18:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《How Tomcat Works》 笔记06 容器">
 <meta name="twitter:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾解析了HttpProcessor类的主要方法。  await和assign方法，用于线程的等待，和接收请求的作用。 process方法，处理请求。  同时，我们还自己">
@@ -386,6 +386,7 @@
 <p>他们的标准实现是：StandardEngine，StandardHost，StandardContext，StandardWrapper。他们都扩展于抽象类CantainerBase类。都是<code>org.apache.catalina.core</code>包的一部分。</p>
 <h2 id="层次关系"><a href="#层次关系" class="headerlink" title="层次关系"></a>层次关系</h2><p>一个容器可以有一个或者多个低层次上的子容器。</p>
 <p>例如一个Context有一个卡或者多个Wrapper，而Wrapper是容器中层次最低的，所有它不能包含子容器。</p>
+<a id="more"></a>
 <h1 id="Pipelining-Tasks（流水线任务）"><a href="#Pipelining-Tasks（流水线任务）" class="headerlink" title="Pipelining Tasks（流水线任务）"></a>Pipelining Tasks（流水线任务）</h1><p>这里介绍Connector调用容器的invoke方法后做的工作。然后谈论<code>org.apache.catalina</code>中四个相关的接口：Pipeline，Valve，ValveContext，和Contained。</p>
 <p><strong>一个流水线（Pipeline）包含了该容器要唤醒的所有阀门（Valve）。</strong></p>
 <p>每个阀门表示一个特定的任务。每个容器的流水线有一个基本的阀门，但是可以添加。可以通过配置文件server.xml来动态添加。</p>
