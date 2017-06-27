@@ -93,15 +93,16 @@
 
 
 
-<meta name="description" content="大道如青天，男儿有求安得闲！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="laiwenqiang">
-<meta property="og:url" content="http://yoursite.com/tags/how-tomcat-works-读书笔记/index.html">
+<meta name="description" content="本文是对于Stack的push方法思考而得来。  Stack类的方法Stack类的方法不多，简要说一下。 由synchronized修饰的有：  public synchronized E pop() public synchronized E peek() public synchronized int search(Object o)  没有synchronized修饰的有：  public">
+<meta property="og:type" content="article">
+<meta property="og:title" content="子类调用父类的synchronized方法">
+<meta property="og:url" content="http://yoursite.com/2017/06/27/子类调用父类的synchronized方法/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:description" content="本文是对于Stack的push方法思考而得来。  Stack类的方法Stack类的方法不多，简要说一下。 由synchronized修饰的有：  public synchronized E pop() public synchronized E peek() public synchronized int search(Object o)  没有synchronized修饰的有：  public">
+<meta property="og:updated_time" content="2017-06-27T15:28:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="laiwenqiang">
-<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
+<meta name="twitter:title" content="子类调用父类的synchronized方法">
+<meta name="twitter:description" content="本文是对于Stack的push方法思考而得来。  Stack类的方法Stack类的方法不多，简要说一下。 由synchronized修饰的有：  public synchronized E pop() public synchronized E peek() public synchronized int search(Object o)  没有synchronized修饰的有：  public">
 
 
 
@@ -129,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/how-tomcat-works-读书笔记/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/27/子类调用父类的synchronized方法/"/>
 
 
 
 
 
-  <title>标签: how tomcat works 读书笔记 | laiwenqiang</title>
+  <title>子类调用父类的synchronized方法 | laiwenqiang</title>
   
 
 
@@ -160,7 +161,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
     <a href="https://github.com/laiwenqiang">
 	<img style="position: absolute; top: 0; left: 0; border: 0;" 
@@ -259,184 +260,158 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h1>how tomcat works 读书笔记<small>标签</small>
-      </h1>
-    </div>
-
+  <div id="posts" class="posts-expand">
     
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记01 一个简单的Web容器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记02 一个简单的Servlet容器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记06 容器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-  </div>
 
   
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/27/子类调用父类的synchronized方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">子类调用父类的synchronized方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-27T23:28:26+08:00">
+                2017-06-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本文是对于Stack的<code>push</code>方法思考而得来。</p>
+</blockquote>
+<h1 id="Stack类的方法"><a href="#Stack类的方法" class="headerlink" title="Stack类的方法"></a>Stack类的方法</h1><p>Stack类的方法不多，简要说一下。</p>
+<p>由<code>synchronized</code>修饰的有：</p>
+<ol>
+<li><code>public synchronized E pop()</code></li>
+<li><code>public synchronized E peek()</code></li>
+<li><code>public synchronized int search(Object o)</code></li>
+</ol>
+<p>没有<code>synchronized</code>修饰的有：</p>
+<ol>
+<li><code>public E push(E item)</code></li>
+<li><code>public boolean empty()</code></li>
+</ol>
+<p class="div-border-left-blue"><code>empty()</code>方法的作用是，判断Stack实例存储的数据的数量是否为0。</p>
+
+<h1 id="push方法是否是线程安全的？"><a href="#push方法是否是线程安全的？" class="headerlink" title="push方法是否是线程安全的？"></a>push方法是否是线程安全的？</h1>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/26/Github创建分支/" rel="next" title="Github创建分支">
+                <i class="fa fa-chevron-left"></i> Github创建分支
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -444,6 +419,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -463,8 +442,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -537,6 +525,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Stack类的方法"><span class="nav-number">1.</span> <span class="nav-text">Stack类的方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#push方法是否是线程安全的？"><span class="nav-number">2.</span> <span class="nav-text">push方法是否是线程安全的？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -650,10 +654,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
