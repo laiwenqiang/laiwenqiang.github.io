@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/06/24/mac下命令行启动mysql/index.html">
 <meta property="og:site_name" content="laiwenqiang">
 <meta property="og:description" content="本文并非原创 启动： 1sudo /usr/local/mysql/support-files/mysql.server start 停止： 1sudo /usr/local/mysql/support-files/mysql.server stop">
-<meta property="og:updated_time" content="2017-06-27T15:33:45.000Z">
+<meta property="og:updated_time" content="2017-07-01T03:25:05.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mac下命令行启动mysql">
 <meta name="twitter:description" content="本文并非原创 启动： 1sudo /usr/local/mysql/support-files/mysql.server start 停止： 1sudo /usr/local/mysql/support-files/mysql.server stop">
@@ -367,6 +367,9 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">alias mysqlstart=&apos;sudo /usr/local/mysql/support-files/mysql.server start&apos;</div><div class="line">alias mysqlstop=&apos;sudo /usr/local/mysql/support-files/mysql.server stop&apos;</div></pre></td></tr></table></figure>
 <p>如果没有.bash_aliases文件，可以创建一个，并在.bash_profile文件的最后加上这样的代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if [ -f ~/.bash_aliases ]; then</div><div class="line">. ~/.bash_aliases</div><div class="line">fi</div></pre></td></tr></table></figure>
+<h2 id=""><a href="#" class="headerlink" title=""></a><br></h2><p><span class="inline-blue">更新：2017年07月01日11:21:35</span></p>
+<p>进入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql -uroot -proot</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -470,8 +473,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -544,6 +556,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

@@ -340,7 +340,7 @@
         
           
             <blockquote>
-<p>本文是对于Stack的<code>push</code>方法思考而得来。</p>
+<p>本文是对于Stack的<code>push</code>方法思考而得来。当子类调用父类的<code>synchronized</code>方法时，获取的同步锁是子类的，而非父类的。</p>
 </blockquote>
 <h1 id="Stack类的方法"><a href="#Stack类的方法" class="headerlink" title="Stack类的方法"></a>Stack类的方法</h1><p>Stack类的方法不多，简要说一下。</p>
 <p>由<code>synchronized</code>修饰的有：</p>
@@ -354,9 +354,14 @@
 <li><code>public E push(E item)</code></li>
 <li><code>public boolean empty()</code></li>
 </ol>
-<p class="div-border-left-blue"><code>empty()</code>方法的作用是，判断Stack实例存储的数据的数量是否为0。</p>
+<p class="div-border-left-blue"><code>empty()</code>方法的作用是，判断存储的数据量是否为0。</p>
 
-<h1 id="push方法是否是线程安全的？"><a href="#push方法是否是线程安全的？" class="headerlink" title="push方法是否是线程安全的？"></a>push方法是否是线程安全的？</h1>
+<h1 id="push方法是否是线程安全的？"><a href="#push方法是否是线程安全的？" class="headerlink" title="push方法是否是线程安全的？"></a>push方法是否是线程安全的？</h1><p>对于pop、peek和search方法，他们都加了<code>synchronized</code>，自然都是线程安全的操作。不过对于search方法加上锁，我觉得没有必要。</p>
+<p>言归正传，push方法细节：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> E <span class="title">push</span><span class="params">(E item)</span> </span>&#123;</div><div class="line">    addElement(item);</div><div class="line">    <span class="keyword">return</span> item;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>addElement(item)</code>是调用父类的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">addElement</span><span class="params">(E obj)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line">    ensureCapacityHelper(elementCount + <span class="number">1</span>);</div><div class="line">    elementData[elementCount++] = obj;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
           
         
       
