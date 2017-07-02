@@ -387,7 +387,7 @@
 <p>验证的方法很简单，只要在父类的同步同步方法中将<code>this</code>打印出即可：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">synchronized</span>(<span class="keyword">this</span>) &#123;  </div><div class="line">    System.out.println(<span class="keyword">this</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>打印的结果是子类对象！</p>
-<p>刚开始看到源码实现的时候，以为push方法由问题，现在看来其实并没有。究其原因，是因为没有理解<code>this</code>关键字。</p>
+<p>刚开始看到源码实现的时候，以为push方法有问题，现在看来其实并没有。究其原因，是因为没有理解<code>this</code>关键字。</p>
 
       
     </div>
