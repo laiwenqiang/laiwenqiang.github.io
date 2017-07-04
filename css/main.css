@@ -1682,7 +1682,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #0030cf;
+  background: #ffe71d;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2790,6 +2790,9 @@ pre {
 }
 .posts-expand .post-title-link {
   color: #1277ea;
+}
+.posts-expand .post {
+  margin-top: 50px;
 }
 span.inline-red {
   display: inline;
