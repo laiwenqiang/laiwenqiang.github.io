@@ -325,8 +325,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">java基础</span>
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
                   </a>
                 </span>
 
@@ -367,7 +367,7 @@
 <p>ReentrantLock作为Lock的实现类，使用的相当广泛。下面着重记录。</p>
 <h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="http://oqgq7175e.bkt.clouddn.com/ReentrantLock.svg" alt="Main"></p>
 <h1 id="常见使用"><a href="#常见使用" class="headerlink" title="常见使用"></a>常见使用</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">lock.lock(); <span class="comment">//或者使用tryLock(x, y)。</span></div><div class="line"><span class="keyword">try</span>&#123;</div><div class="line">  <span class="comment">//work</span></div><div class="line">&#125; <span class="keyword">finally</span> &#123;</div><div class="line">  lock.unlock();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p class="div-border-left-red">Lock实现synchronized的功能，但是反过来却不成立。</p>
+<p class="div-border-left-red">Lock可以实现synchronized的功能，但是反过来却不成立。</p>
 
 
 
