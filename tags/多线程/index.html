@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="mac命令行,mysql," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -93,17 +93,15 @@
 
 
 
-<meta name="description" content="本文并非原创 启动： 1sudo /usr/local/mysql/support-files/mysql.server start 停止： 1sudo /usr/local/mysql/support-files/mysql.server stop">
-<meta name="keywords" content="mac命令行,mysql">
-<meta property="og:type" content="article">
-<meta property="og:title" content="mac下命令行启动mysql">
-<meta property="og:url" content="http://yoursite.com/2017/06/24/mac下命令行启动mysql/index.html">
+<meta name="description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:type" content="website">
+<meta property="og:title" content="laiwenqiang">
+<meta property="og:url" content="http://yoursite.com/tags/多线程/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="本文并非原创 启动： 1sudo /usr/local/mysql/support-files/mysql.server start 停止： 1sudo /usr/local/mysql/support-files/mysql.server stop">
-<meta property="og:updated_time" content="2017-07-01T03:25:05.000Z">
+<meta property="og:description" content="大道如青天，男儿有求安得闲！">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mac下命令行启动mysql">
-<meta name="twitter:description" content="本文并非原创 启动： 1sudo /usr/local/mysql/support-files/mysql.server start 停止： 1sudo /usr/local/mysql/support-files/mysql.server stop">
+<meta name="twitter:title" content="laiwenqiang">
+<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
 
 
 
@@ -131,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/24/mac下命令行启动mysql/"/>
+  <link rel="canonical" href="http://yoursite.com/tags/多线程/"/>
 
 
 
 
 
-  <title>mac下命令行启动mysql | laiwenqiang</title>
+  <title>标签: 多线程 | laiwenqiang</title>
   
 
 
@@ -162,7 +160,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left  ">
     <div class="headband"></div>
     <a href="https://github.com/laiwenqiang">
 	<img style="position: absolute; top: 0; left: 0; border: 0;" 
@@ -261,188 +259,44 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/mac下命令行启动mysql/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
+  <div id="posts" class="posts-collapse">
+    <div class="collection-title">
+      <h1>多线程<small>标签</small>
+      </h1>
+    </div>
 
     
-      <header class="post-header">
+      
 
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h2 class="post-title">
         
+            <a class="post-title-link" href="/2017/07/05/ReentrantLock初探/" itemprop="url">
+              
+                <span itemprop="name">ReentrantLock初探</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">mac下命令行启动mysql</h1>
-        
+      </h2>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T23:43:36+08:00">
-                2017-06-24
-              </time>
-            
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2017-07-05T22:25:55+08:00"
+              content="2017-07-05" >
+          07-05
+        </time>
+      </div>
 
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index">
-                    <span itemprop="name">mysql</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p><span class="inline-red">本文并非原创</span></p>
-<p>启动：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo /usr/local/mysql/support-files/mysql.server start</div></pre></td></tr></table></figure>
-<p>停止：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo /usr/local/mysql/support-files/mysql.server stop</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>还是比较麻烦，可以简化一下：在~/.bash_aliases中添加这样的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">alias mysqlstart=&apos;sudo /usr/local/mysql/support-files/mysql.server start&apos;</div><div class="line">alias mysqlstop=&apos;sudo /usr/local/mysql/support-files/mysql.server stop&apos;</div></pre></td></tr></table></figure>
-<p>如果没有.bash_aliases文件，可以创建一个，并在.bash_profile文件的最后加上这样的代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if [ -f ~/.bash_aliases ]; then</div><div class="line">. ~/.bash_aliases</div><div class="line">fi</div></pre></td></tr></table></figure>
-<h2 id=""><a href="#" class="headerlink" title=""></a><br></h2><p><span class="inline-blue">更新：2017年07月01日11:21:35</span></p>
-<p>进入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql -uroot -proot</div></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/mac命令行/" rel="tag"><i class="fa fa-tag"></i> mac命令行</a>
-          
-            <a href="/tags/mysql/" rel="tag"><i class="fa fa-tag"></i> mysql</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" rel="next" title="《How Tomcat Works》 笔记04 一Tomcat的默认连接器">
-                <i class="fa fa-chevron-left"></i> 《How Tomcat Works》 笔记04 一Tomcat的默认连接器
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/26/SpringSecurity获取用户Id/" rel="prev" title="Spring Security 获取用户Id">
-                Spring Security 获取用户Id <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
+    </header>
   </article>
 
 
-
-    <div class="post-spread">
-      
-    </div>
+    
   </div>
+
+  
 
 
           </div>
@@ -450,10 +304,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-  </div>
-
 
         </div>
         
@@ -473,17 +323,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -556,22 +397,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -685,10 +510,10 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-
+  
 
   
 
