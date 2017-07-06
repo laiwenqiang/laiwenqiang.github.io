@@ -1682,7 +1682,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #296f5b;
+  background: #49ffb6;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2792,6 +2792,15 @@ pre {
 }
 .posts-expand .post-body img {
   border: 0px;
+}
+.post-title {
+  border: 0px;
+}
+h1 {
+  border-color: #c5c5c5 !important;
+  margin-top: 55px;
+  border-bottom: 1px solid;
+  padding-bottom: 10px;
 }
 span.inline-red {
   display: inline;
