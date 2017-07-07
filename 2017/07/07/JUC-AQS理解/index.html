@@ -100,12 +100,12 @@
 <meta property="og:url" content="http://yoursite.com/2017/07/07/JUC-AQS理解/index.html">
 <meta property="og:site_name" content="laiwenqiang">
 <meta property="og:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
-<meta property="og:image" content="http://oqgq7175e.bkt.clouddn.com/Artboard-acquire.png">
+<meta property="og:image" content="http://oqgq7175e.bkt.clouddn.com/AQS-acquire.svg">
 <meta property="og:updated_time" content="2017-07-07T13:16:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JUC-AQS理解">
 <meta name="twitter:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
-<meta name="twitter:image" content="http://oqgq7175e.bkt.clouddn.com/Artboard-acquire.png">
+<meta name="twitter:image" content="http://oqgq7175e.bkt.clouddn.com/AQS-acquire.svg">
 
 
 
@@ -371,7 +371,7 @@
 <li>selfInterrupt()比较好理解，就是将当前线程挂起。</li>
 </ol>
 <p>看一下简要的流程图：</p>
-<p><img src="http://oqgq7175e.bkt.clouddn.com/Artboard-acquire.png" alt="Artboard-acquire"></p>
+<p><img src="http://oqgq7175e.bkt.clouddn.com/AQS-acquire.svg" alt="Artboard-acquire"></p>
 
       
     </div>
