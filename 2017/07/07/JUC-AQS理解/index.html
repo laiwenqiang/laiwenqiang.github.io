@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="多线程,JUC源码," />
 
 
 
@@ -93,15 +93,17 @@
 
 
 
-<meta name="description" content="大道如青天，男儿有求安得闲！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="laiwenqiang">
-<meta property="og:url" content="http://yoursite.com/tags/how-tomcat-works-读书笔记/index.html">
+<meta name="description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
+<meta name="keywords" content="多线程,JUC源码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC-AQS理解">
+<meta property="og:url" content="http://yoursite.com/2017/07/07/JUC-AQS理解/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
+<meta property="og:updated_time" content="2017-07-07T13:16:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="laiwenqiang">
-<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
+<meta name="twitter:title" content="JUC-AQS理解">
+<meta name="twitter:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
 
 
 
@@ -129,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/how-tomcat-works-读书笔记/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/07/JUC-AQS理解/"/>
 
 
 
 
 
-  <title>标签: how tomcat works 读书笔记 | laiwenqiang</title>
+  <title>JUC-AQS理解 | laiwenqiang</title>
   
 
 
@@ -160,7 +162,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
     <a href="https://github.com/laiwenqiang">
 	<img style="position: absolute; top: 0; left: 0; border: 0;" 
@@ -259,184 +261,182 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h1>how tomcat works 读书笔记<small>标签</small>
-      </h1>
-    </div>
-
+  <div id="posts" class="posts-expand">
     
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记01 一个简单的Web容器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记02 一个简单的Servlet容器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记06 容器</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/" itemprop="url">
-              
-                <span itemprop="name">《How Tomcat Works》 笔记05 Tomcat的默认连接器(续)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-24T17:16:45+08:00"
-              content="2017-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-  </div>
 
   
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/07/JUC-AQS理解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JUC-AQS理解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-07T21:16:59+08:00">
+                2017-07-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。</p>
+</blockquote>
+<h1 id="acquire方法"><a href="#acquire方法" class="headerlink" title="acquire方法"></a>acquire方法</h1><p>接上章节，ReentrantLock会调用<code>acquire(1)</code>来进行线程的挂起和唤醒操作。<code>acquire(1)</code>作为AQS的<span class="inline-red">一个重要入口</span>，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</div><div class="line">      acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</div><div class="line">    selfInterrupt();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>tryAcquire()是一个尝试获取资源锁的方法，由子类去实现的。例如：ReentrantLock的公平锁和非公平锁，他们根据自己的需求去实现它。</li>
+<li>addWaiter()会创建一个存放当前线程的节点，并且将该节点放入等待队列之中。</li>
+<li>acquireQueued()当前线程放入队列后，检查是否需要挂起。</li>
+<li>selfInterrupt()比较好理解，就是将当前线程挂起。</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
+          
+            <a href="/tags/JUC源码/" rel="tag"><i class="fa fa-tag"></i> JUC源码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/05/ReentrantLock初探/" rel="next" title="JUC-ReentrantLock初探">
+                <i class="fa fa-chevron-left"></i> JUC-ReentrantLock初探
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -444,6 +444,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -463,8 +467,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -537,6 +550,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#acquire方法"><span class="nav-number">1.</span> <span class="nav-text">acquire方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -650,10 +679,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
