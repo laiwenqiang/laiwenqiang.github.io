@@ -93,18 +93,18 @@
 
 
 
-<meta name="description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
+<meta name="description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  本文主要讲获取锁的过程。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一">
 <meta name="keywords" content="多线程,JUC源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-AQS理解（一）">
 <meta property="og:url" content="http://yoursite.com/2017/07/07/JUC-AQS理解（一）/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
+<meta property="og:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  本文主要讲获取锁的过程。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一">
 <meta property="og:image" content="http://oqgq7175e.bkt.clouddn.com/AQS-acquire.svg">
 <meta property="og:updated_time" content="2017-07-07T13:16:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JUC-AQS理解（一）">
-<meta name="twitter:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一个重要入口，代码如下： 12">
+<meta name="twitter:description" content="AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。  本文主要讲获取锁的过程。  acquire方法接上章节，ReentrantLock会调用acquire(1)来进行线程的挂起和唤醒操作。acquire(1)作为AQS的一">
 <meta name="twitter:image" content="http://oqgq7175e.bkt.clouddn.com/AQS-acquire.svg">
 
 
@@ -362,6 +362,8 @@
         <blockquote>
 <p>AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。</p>
 </blockquote>
+<font color="red">本文主要讲获取锁的过程。</font>
+
 <h1 id="acquire方法"><a href="#acquire方法" class="headerlink" title="acquire方法"></a>acquire方法</h1><p>接上章节，ReentrantLock会调用<code>acquire(1)</code>来进行线程的挂起和唤醒操作。<code>acquire(1)</code>作为AQS的<span class="inline-red">一个重要入口</span>，代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</div><div class="line">      <span class="comment">//Node.EXCLUSIVE表示一个独占锁</span></div><div class="line">      acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</div><div class="line">    selfInterrupt();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ol>
