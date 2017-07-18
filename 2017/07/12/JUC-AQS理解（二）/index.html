@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="多线程,JUC源码," />
+  <meta name="keywords" content="多线程,JDK源码," />
 
 
 
@@ -94,7 +94,7 @@
 
 
 <meta name="description" content="在AQS中，等待中的线程会阻塞中，并且保存在CLH队列中。而这些线程会在适当是时机被唤醒（如果条件满足的话）。  本文主要讲释放锁的过程，相对获取锁而言会显得简单一些。 release方法ReentrantLock会调用release(1)来进行线程的唤醒操作。release(1)作为AQS的一个重要出口，代码如下： 123456789public final boolean release(i">
-<meta name="keywords" content="多线程,JUC源码">
+<meta name="keywords" content="多线程,JDK源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-AQS理解（二）">
 <meta property="og:url" content="http://yoursite.com/2017/07/12/JUC-AQS理解（二）/index.html">
@@ -405,7 +405,7 @@
           
             <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
           
-            <a href="/tags/JUC源码/" rel="tag"><i class="fa fa-tag"></i> JUC源码</a>
+            <a href="/tags/JDK源码/" rel="tag"><i class="fa fa-tag"></i> JDK源码</a>
           
         </div>
       
@@ -427,6 +427,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/16/线程通信之Condition条件变量/" rel="prev" title="线程通信之Condition条件变量">
+                线程通信之Condition条件变量 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -498,7 +502,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -509,7 +513,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -520,7 +524,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
