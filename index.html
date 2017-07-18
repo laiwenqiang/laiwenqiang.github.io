@@ -356,14 +356,17 @@
       
         
           <blockquote>
-<p>说到Lock就不得不说Condition条件变量，简单的说，作用类似于synchronized的wait和notify。但是，功能会更加强大一些。</p>
+<p>说到Lock就不得不说Condition条件变量，简单的说，作用类似于synchronized的wait和notify。但是，功能会更加强大一些。本文主要从Condition的用法着手，讲解一个例子。</p>
 </blockquote>
-<h1 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h1><h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><ol>
-<li>三个线程，线程A、B和C，</li>
-<li>A打印“01”，B打印“02”，C打印“03”，</li>
-<li>并且<span class="inline-yellow">按照顺序循环打印</span>。</li>
+<h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><ol>
+<li><p>三个线程，线程A、B和C，</p>
+</li>
+<li><p>A打印“01”，B打印“02”，C打印“03”，</p>
+</li>
+<li><p>并且<span class="inline-yellow">按照顺序循环打印</span>。</p>
+</li>
 </ol>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这里的主要难点有两个，</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>这里的主要难点有两个，</p>
 <ol>
 <li><p>按照顺序打印。</p>
 <p>设置三个条件变量（condition），由前一个线程唤醒后一个线程，如此一来即可实现顺序打印。</p>
