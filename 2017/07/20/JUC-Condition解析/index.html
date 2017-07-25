@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="多线程,JDK源码," />
+  <meta name="keywords" content="JDK源码,多线程," />
 
 
 
@@ -94,7 +94,7 @@
 
 
 <meta name="description" content="通常使用lock.newCondition()获取一个Condition实例，由这个实例去挂起或者唤醒线程。本文主要剖析在AQS中，await()和signal()方法实现细节。  UML类图 AQS中有个ConditionObject类，方法都集中在该类之中。 运行流程概要简单实现通过一个锁获取Condition实例 12private Lock lock = new ReentrantLoc">
-<meta name="keywords" content="多线程,JDK源码">
+<meta name="keywords" content="JDK源码,多线程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-Condition解析">
 <meta property="og:url" content="http://yoursite.com/2017/07/20/JUC-Condition解析/index.html">
@@ -389,13 +389,15 @@
 <li>假设有两个线程：A和B，他们分别执行到方法A和方法B。</li>
 <li>A线程到lock()方法，获取资源。随后B线程也执行到lock()方法，由于资源已经被占有，所以B线程被放入CLH等待队列。</li>
 <li>A线程继续执行到await()方法。此时，A线程会被放入condition队列，并且释放锁资源，唤醒在CLH队列中的B线程，同时自己挂起。</li>
-<li>B线程被从等待队列中取出，得以继续执行到signal()方法。此时，将会把处于阻塞的A线程唤醒。</li>
+<li>B线程被从等待队列中取出，得以继续执行到signal()方法。</li>
+<li><span class="inline-red">执行signal()方法的线程B，将会把处于阻塞的线程A从condition队列中取出，然后放入CLH队列。</span></li>
+<li>直到线程B执行完unlock()方法，会将阻塞在CLH队列中的线程A唤醒。</li>
 </ol>
 <p class="div-border-left-red">线程A需要先于线程B运行，运行的顺序可以由IED的debug调试控制。</p>
 
 <h1 id="代码解析"><a href="#代码解析" class="headerlink" title="代码解析"></a>代码解析</h1><h2 id="await-方法"><a href="#await-方法" class="headerlink" title="await()方法"></a>await()方法</h2><p>用于挂起当前线程。与此同时，将会释放锁资源。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Thread.interrupted())</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</div><div class="line">  <span class="comment">//添加到condition队列</span></div><div class="line">  Node node = addConditionWaiter();</div><div class="line">  <span class="comment">//释放锁资源，此时CLH队列里的线程将会被唤醒</span></div><div class="line">  <span class="keyword">int</span> savedState = fullyRelease(node);</div><div class="line">  <span class="keyword">int</span> interruptMode = <span class="number">0</span>;</div><div class="line">  <span class="keyword">while</span> (!isOnSyncQueue(node)) &#123;</div><div class="line">    <span class="comment">//挂起</span></div><div class="line">    LockSupport.park(<span class="keyword">this</span>);</div><div class="line">    <span class="keyword">if</span> ((interruptMode = checkInterruptWhileWaiting(node)) != <span class="number">0</span>)</div><div class="line">      <span class="keyword">break</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</div><div class="line">    interruptMode = REINTERRUPT;</div><div class="line">  <span class="keyword">if</span> (node.nextWaiter != <span class="keyword">null</span>) <span class="comment">// clean up if cancelled</span></div><div class="line">    unlinkCancelledWaiters();</div><div class="line">  <span class="keyword">if</span> (interruptMode != <span class="number">0</span>)</div><div class="line">    reportInterruptAfterWait(interruptMode);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p></p><p class="div-border-left-red">在第7行代码，当前线程会释放CLH中的挂起线程。而从第7行到第11行之间，当前线程和被唤醒线程同时在运行。</p><p></p>
+<p></p><p class="div-border-left-red">在第7行代码，当前线程会唤醒CLH中的挂起线程。而从第7行到第11行之间，当前线程和被唤醒线程同时在运行。</p><p></p>
 <h2 id="doSignal-方法"><a href="#doSignal-方法" class="headerlink" title="doSignal()方法"></a>doSignal()方法</h2><p>由<code>signal()</code>方法调用。用于：</p>
 <ol>
 <li>将在condition等待队里中的头节点取出，</li>
@@ -407,7 +409,8 @@
 <li>同时把该节点里的线程唤醒。</li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doSignal</span><span class="params">(Node first)</span> </span>&#123;<span class="comment">//first是Condition队列里的第一个节点</span></div><div class="line">  <span class="keyword">do</span> &#123;</div><div class="line">    <span class="keyword">if</span> ( (firstWaiter = first.nextWaiter) == <span class="keyword">null</span>)</div><div class="line">      lastWaiter = <span class="keyword">null</span>;</div><div class="line">    first.nextWaiter = <span class="keyword">null</span>;</div><div class="line">    <span class="comment">//唤醒被挂起的线程</span></div><div class="line">  &#125; <span class="keyword">while</span> (!transferForSignal(first) &amp;&amp;</div><div class="line">           (first = firstWaiter) != <span class="keyword">null</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="transferForSignal-方法"><a href="#transferForSignal-方法" class="headerlink" title="transferForSignal()方法"></a>transferForSignal()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">transferForSignal</span><span class="params">(Node node)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!compareAndSetWaitStatus(node, Node.CONDITION, <span class="number">0</span>))</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  <span class="comment">//加入CLH等待队列</span></div><div class="line">  Node p = enq(node);</div><div class="line">  <span class="keyword">int</span> ws = p.waitStatus;</div><div class="line">  <span class="keyword">if</span> (ws &gt; <span class="number">0</span> || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))</div><div class="line">    <span class="comment">//唤醒线程</span></div><div class="line">    LockSupport.unpark(node.thread);</div><div class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="transferForSignal-方法"><a href="#transferForSignal-方法" class="headerlink" title="transferForSignal()方法"></a>transferForSignal()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">transferForSignal</span><span class="params">(Node node)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!compareAndSetWaitStatus(node, Node.CONDITION, <span class="number">0</span>))</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  <span class="comment">//加入CLH等待队列</span></div><div class="line">  Node p = enq(node);</div><div class="line">  <span class="keyword">int</span> ws = p.waitStatus;</div><div class="line">  <span class="keyword">if</span> (ws &gt; <span class="number">0</span> || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))</div><div class="line">    <span class="comment">//如果状态是CANCELLED，则唤醒线程。</span></div><div class="line">    <span class="comment">//这里表示不理解。</span></div><div class="line">    LockSupport.unpark(node.thread);</div><div class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>正常情况下都由unlock()方法唤醒被阻塞的线程。</p>
 
       
     </div>
@@ -437,9 +440,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
-          
             <a href="/tags/JDK源码/" rel="tag"><i class="fa fa-tag"></i> JDK源码</a>
+          
+            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
           
         </div>
       
