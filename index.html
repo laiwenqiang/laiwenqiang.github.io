@@ -286,6 +286,154 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/26/单例模式-双检锁/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/26/单例模式-双检锁/" itemprop="url">单例模式-双检锁</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-26T22:03:18+08:00">
+                2017-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>singleton作为一个常见的设计模式，需要考虑到并发访问等一系列的问题。它有很多种实现方法，这里只涉及到DCL（双检锁）实现方式的细节。</p>
+</blockquote>
+<h1 id="单例模式（双检锁）"><a href="#单例模式（双检锁）" class="headerlink" title="单例模式（双检锁）"></a>单例模式（双检锁）</h1><p>今天亮仔贴了一段代码，内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> Singleton singleton;  </div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span> </span>&#123;&#125;  </div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getSingleton</span><span class="params">()</span> </span>&#123;  </div><div class="line">    <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">synchronized</span> (Singleton.class) &#123;  </div><div class="line">        <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;  </div><div class="line">          singleton = <span class="keyword">new</span> Singleton();  </div><div class="line">        &#125;  </div><div class="line">      &#125;  </div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">return</span> singleton;  </div><div class="line">  &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>很容易看出，<span class="inline-green">这是一个单例，实现了延迟加载，并且考虑了并发下的效率问题。</span>问题是这段代码在多线程下访问时，会是线程安全的吗？</p>
+<p class="div-border-left-red">用到了两个<code>if (singleton == null)</code>，顾名思义，这种方法就称作双检锁。</p>
+
+<h1 id="常规思路"><a href="#常规思路" class="headerlink" title="常规思路"></a>常规思路</h1><p>一开始我认为是线程安全的。</p>
+<ol>
+<li>假设有线程A和B，他们执行到第6行。线程A先占有锁，线程B挂起等待。</li>
+<li>线程A创建对象。</li>
+<li>线程B被唤醒，发现对象已被创建，不会再次创建对象。</li>
+</ol>
+<p>这个难道不是线程安全的吗？</p>
+<h1 id="深入思考"><a href="#深入思考" class="headerlink" title="深入思考"></a>深入思考</h1>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/20/JUC-Condition解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -876,158 +1024,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/07/JUC-AQS理解（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/07/JUC-AQS理解（一）/" itemprop="url">JUC-AQS理解（一）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-07T21:16:59+08:00">
-                2017-07-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">Java基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>AQS（AbstractQueuedSynchronizer）类，是java.util.corrent包的核心部分。它用模板模式构建起来，主要是维护了一个CLH队列（在上章节有提到过），用来调度队列中的线程挂起和唤醒等操作。</p>
-</blockquote>
-<font color="red">本文主要讲获取锁的过程。</font>
-
-<h1 id="acquire方法"><a href="#acquire方法" class="headerlink" title="acquire方法"></a>acquire方法</h1><p>接上章节，ReentrantLock会调用<code>acquire(1)</code>来进行线程的挂起操作。<code>acquire(1)</code>作为AQS的<span class="inline-red">一个重要入口</span>，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</div><div class="line">      <span class="comment">//Node.EXCLUSIVE表示一个独占锁</span></div><div class="line">      acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</div><div class="line">    selfInterrupt();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>tryAcquire()是一个尝试获取资源锁的方法，由子类去实现的。例如：ReentrantLock的公平锁和非公平锁，他们根据自己的需求去实现它。</li>
-<li>addWaiter()会创建一个存放当前线程的节点，并且将该节点放入等待队列之中。</li>
-<li>acquireQueued()当前线程放入队列后，检查是否需要挂起。</li>
-<li>selfInterrupt()比较好理解，就是将当前线程挂起。</li>
-</ol>
-<p>看一下简要的流程图：</p>
-<p><img src="http://oqgq7175e.bkt.clouddn.com/AQS-acquire.svg" alt="Artboard-acquire"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/07/JUC-AQS理解（一）/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1077,7 +1073,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1099,7 +1095,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
