@@ -391,7 +391,7 @@
 <li>线程B被唤醒，发现对象已被创建，不会再次创建对象。</li>
 </ol>
 <p>这个难道不是线程安全的吗？</p>
-<h1 id="深入思考"><a href="#深入思考" class="headerlink" title="深入思考"></a>深入思考</h1><p>jvm创建对象并非是原子性的。</p>
+<h1 id="深入思考"><a href="#深入思考" class="headerlink" title="深入思考"></a>深入思考</h1><p><span class="inline-red">jvm创建对象并非是原子性的</span>，导致下面的流程可能发生：</p>
 <ol>
 <li>线程A获取锁，执行到第8行，开始创建对象。</li>
 <li>同时，线程B执行到第5行，判断对象是否为null。</li>
@@ -399,7 +399,12 @@
 <li>然而，此时线程A创建对象并未完全结束，造成线程B获取到的对象出现问题。</li>
 </ol>
 <h2 id="jvm加载类的步骤"><a href="#jvm加载类的步骤" class="headerlink" title="jvm加载类的步骤"></a>jvm加载类的步骤</h2><ol>
-<li>加载阶段（load）</li>
+<li><p>加载阶段（load）：</p>
+<p>从硬盘上寻找对应的class文件，将读取二级制数据加载到内存，放在运行时数据区的方法区中。在堆区创建一个java.lang.Class对象，用来封装在方法区内的数据结构。</p>
+</li>
+<li><p>连接阶段（link）：</p>
+<p>​</p>
+</li>
 </ol>
 
           
