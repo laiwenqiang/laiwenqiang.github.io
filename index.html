@@ -398,14 +398,31 @@
 <li>线程B<code>if (singleton == null)</code>,判断结果为false，返回对象。</li>
 <li>然而，此时线程A创建对象并未完全结束，造成线程B获取到的对象出现问题。</li>
 </ol>
+<h2 id="创建对象的步骤"><a href="#创建对象的步骤" class="headerlink" title="创建对象的步骤"></a>创建对象的步骤</h2><p>由于<code>new</code>一个对象并非原子性的，它是分为好几个步骤，所以导致上面的第4步出现问题。</p>
+<ol>
+<li>分配对象的内存空间。</li>
+<li>设置实例（singleton）指向内存空间（此时singleton不为null，可是对象还未初始化完成）。</li>
+<li>初始化对象。</li>
+</ol>
 <h2 id="jvm加载类的步骤"><a href="#jvm加载类的步骤" class="headerlink" title="jvm加载类的步骤"></a>jvm加载类的步骤</h2><ol>
 <li><p>加载阶段（load）：</p>
 <p>从硬盘上寻找对应的class文件，将读取二级制数据加载到内存，放在运行时数据区的方法区中。在堆区创建一个java.lang.Class对象，用来封装在方法区内的数据结构。</p>
 </li>
 <li><p>连接阶段（link）：</p>
-<p>​</p>
+<p>2.1 验证：检查数据是否符合规范。</p>
+<p>2.2 准备：主要为类的静态变量分配内存，并设置默认的初始值。</p>
+<p>2.3 解析：查找常量池中的类、字段、方法、接口的符号引用，将他们替   换为直接引用。</p>
+</li>
+<li><p>初始化（init）：</p>
+<p>为类的静态变量设置正确的初始值。</p>
 </li>
 </ol>
+<p class="div-border-left-red">可见，由于创建一个对象并非原子性，导致该段代码出现问题。</p>
+
+<h1 id="使用volatile解决"><a href="#使用volatile解决" class="headerlink" title="使用volatile解决"></a>使用volatile解决</h1><p>在JDK1.5以后，对volatile进行了修改。（其实我也是看网上的文章这么说的，实际情况并未证实）</p>
+<p>volatile可以将创建对象的步骤作为原子性操作，避免上述情况的发生。</p>
+<p>所以添加volatile，修改代码的第2行为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;</div></pre></td></tr></table></figure>
 
           
         
