@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Spring Security," />
+  <meta name="keywords" content="多线程," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="获取SpringSecurity里存放的用户名字比较容易，而获取用户的id却有点费周折。  获取用户名12Authentication authentication = SecurityContextHolder.getContext().getAuthentication();String loginName = authentication.getName(); 获取用户id自定义个cust">
-<meta name="keywords" content="Spring Security">
+<meta name="description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。  设置中断状态123456new Thread(() -&amp;gt; &amp;#">
+<meta name="keywords" content="多线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring Security 获取用户Id">
-<meta property="og:url" content="http://yoursite.com/2017/06/26/SpringSecurity获取用户Id/index.html">
+<meta property="og:title" content="线程的中断状态">
+<meta property="og:url" content="http://yoursite.com/2017/07/27/线程的中断状态/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="获取SpringSecurity里存放的用户名字比较容易，而获取用户的id却有点费周折。  获取用户名12Authentication authentication = SecurityContextHolder.getContext().getAuthentication();String loginName = authentication.getName(); 获取用户id自定义个cust">
-<meta property="og:updated_time" content="2017-06-25T16:37:36.000Z">
+<meta property="og:description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。  设置中断状态123456new Thread(() -&amp;gt; &amp;#">
+<meta property="og:updated_time" content="2017-07-27T14:46:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Security 获取用户Id">
-<meta name="twitter:description" content="获取SpringSecurity里存放的用户名字比较容易，而获取用户的id却有点费周折。  获取用户名12Authentication authentication = SecurityContextHolder.getContext().getAuthentication();String loginName = authentication.getName(); 获取用户id自定义个cust">
+<meta name="twitter:title" content="线程的中断状态">
+<meta name="twitter:description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。  设置中断状态123456new Thread(() -&amp;gt; &amp;#">
 
 
 
@@ -131,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/26/SpringSecurity获取用户Id/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/27/线程的中断状态/"/>
 
 
 
 
 
-  <title>Spring Security 获取用户Id | laiwenqiang</title>
+  <title>线程的中断状态 | laiwenqiang</title>
   
 
 
@@ -286,7 +286,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/26/SpringSecurity获取用户Id/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/27/线程的中断状态/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="laiwenqiang">
@@ -303,7 +303,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Spring Security 获取用户Id</h1>
+          <h1 class="post-title" itemprop="name headline">线程的中断状态</h1>
         
 
         <div class="post-meta">
@@ -315,8 +315,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T00:37:36+08:00">
-                2017-06-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-27T22:46:09+08:00">
+                2017-07-27
               </time>
             
 
@@ -325,6 +325,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -351,19 +373,21 @@
 
       
         <blockquote>
-<p>获取SpringSecurity里存放的用户名字比较容易，而获取用户的id却有点费周折。</p>
+<p>一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。</p>
 </blockquote>
-<h1 id="获取用户名"><a href="#获取用户名" class="headerlink" title="获取用户名"></a>获取用户名</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</div><div class="line">String loginName = authentication.getName();</div></pre></td></tr></table></figure>
-<h1 id="获取用户id"><a href="#获取用户id" class="headerlink" title="获取用户id"></a>获取用户id</h1><h2 id="自定义个custUser类"><a href="#自定义个custUser类" class="headerlink" title="自定义个custUser类"></a>自定义个custUser类</h2><p>custUser继承<code>org.springframework.security.core.userdetails.User</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustUser</span> <span class="keyword">extends</span> <span class="title">org</span>.<span class="title">springframework</span>.<span class="title">security</span>.<span class="title">core</span>.<span class="title">userdetails</span>.<span class="title">User</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> User user;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustUser</span><span class="params">(String username, String password, Collection&lt;? extends GrantedAuthority&gt; authorities, User user)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(username, password, authorities);</div><div class="line">        <span class="keyword">this</span>.user = user;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> user;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p class="div-border-left-red">该类的构造方法接收一个User对象，<code>getUser()</code>方法不可缺少。</p>
+<h1 id="中断相关的方法"><a href="#中断相关的方法" class="headerlink" title="中断相关的方法"></a>中断相关的方法</h1><p>Thread类中，提供了和中断状态相关的三个方法：</p>
+<ol>
+<li><code>isInterrupted()</code>：检查是否发生中断。</li>
+<li><code>interrupted()</code>：检查是否发生中断，并且清除中断状态。</li>
+<li><code>interrupt()</code>：设置线程的中断状态，但并未发生中断。</li>
+</ol>
+<h1 id="设置中断状态"><a href="#设置中断状态" class="headerlink" title="设置中断状态"></a>设置中断状态</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</div><div class="line">  <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">    System.out.println(<span class="string">"booting..."</span>);</div><div class="line">    Thread.currentThread().interrupt();<span class="comment">//设置中断状态</span></div><div class="line">  &#125;</div><div class="line">&#125;).start();</div></pre></td></tr></table></figure>
+<p>虽然设置了中断状态，但是线程并未停止，依旧在循环打印。</p>
+<p class="div-border-left-red"><code>interrupt()</code>方法只是设置了中断状态，线程并不会因此而挂起。如果要挂起，需要使用<code>LockSupport</code>类的<code>park()</code>    方法。</p>
 
-<a id="more"></a>
-<h2 id="修改CustUserDetailsService类"><a href="#修改CustUserDetailsService类" class="headerlink" title="修改CustUserDetailsService类"></a>修改CustUserDetailsService类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustUserDetailsService</span> <span class="keyword">implements</span> <span class="title">UserDetailsService</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> UserService userService;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> User user;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> UserDetails <span class="title">loadUserByUsername</span><span class="params">(String s)</span> <span class="keyword">throws</span> UsernameNotFoundException </span>&#123;</div><div class="line">        user = userService.getUserByUsername(s);</div><div class="line">        <span class="keyword">if</span>(user != <span class="keyword">null</span>) &#123;</div><div class="line">            Set&lt;GrantedAuthority&gt; grantedAuthorities = <span class="keyword">new</span> HashSet&lt;&gt;();</div><div class="line">            grantedAuthorities.add(<span class="keyword">new</span> SimpleGrantedAuthority(<span class="string">"ADMIN"</span>));</div><div class="line">            grantedAuthorities.add(<span class="keyword">new</span> SimpleGrantedAuthority(<span class="string">"USER"</span>));</div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> CustUser(user.getUsername(),</div><div class="line">                    user.getPassword(), grantedAuthorities, user);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UsernameNotFoundException(<span class="string">"用户名不存在"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p class="div-border-left-red"><code>return</code>返回上面的custUser。</p>
+<h1 id="interrupt的使用思路"><a href="#interrupt的使用思路" class="headerlink" title="interrupt的使用思路"></a>interrupt的使用思路</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> run &#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">while</span>(!Thread.currentThread().isInterrupted()) &#123;</div><div class="line">      <span class="comment">//doWork</span></div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">catch</span> ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当线程的状态被设置为中断后，while()循环将不会执行，相当于中断了。</p>
 
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">getLoginId</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> id = ((CustUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getId();</div><div class="line">  <span class="keyword">return</span> String.valueOf(id);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p class="div-border-left-red"><code>getPrincipal()</code>后，转化为custUser对象。</p>
       
     </div>
 
@@ -392,7 +416,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Spring-Security/" rel="tag"><i class="fa fa-tag"></i> Spring Security</a>
+            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
           
         </div>
       
@@ -405,8 +429,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/24/mac下命令行启动mysql/" rel="next" title="mac下命令行启动mysql">
-                <i class="fa fa-chevron-left"></i> mac下命令行启动mysql
+              <a href="/2017/07/26/单例模式-双检锁/" rel="next" title="单例模式-双检锁">
+                <i class="fa fa-chevron-left"></i> 单例模式-双检锁
               </a>
             
           </div>
@@ -414,10 +438,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/26/Github创建分支/" rel="prev" title="Github创建分支">
-                Github创建分支 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -557,7 +577,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#获取用户名"><span class="nav-number">1.</span> <span class="nav-text">获取用户名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取用户id"><span class="nav-number">2.</span> <span class="nav-text">获取用户id</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义个custUser类"><span class="nav-number">2.1.</span> <span class="nav-text">自定义个custUser类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改CustUserDetailsService类"><span class="nav-number">2.2.</span> <span class="nav-text">修改CustUserDetailsService类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">2.3.</span> <span class="nav-text">使用</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#中断相关的方法"><span class="nav-number">1.</span> <span class="nav-text">中断相关的方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置中断状态"><span class="nav-number">2.</span> <span class="nav-text">设置中断状态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#interrupt的使用思路"><span class="nav-number">3.</span> <span class="nav-text">interrupt的使用思路</span></a></li></ol></div>
             
 
           </div>
