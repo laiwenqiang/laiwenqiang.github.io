@@ -380,6 +380,7 @@
 <p>很容易看出，<span class="inline-green">这是一个单例，实现了延迟加载，并且考虑了并发下的效率问题。</span>问题是这段代码在多线程下访问时，会是线程安全的吗？</p>
 <p class="div-border-left-red">用到了两个<code>if (singleton == null)</code>，顾名思义，这种方法就称作双检锁。</p>
 
+<a id="more"></a>
 <h1 id="常规思路"><a href="#常规思路" class="headerlink" title="常规思路"></a>常规思路</h1><p>一开始我认为是线程安全的。</p>
 <ol>
 <li>假设有线程A和B，他们执行到第6行。线程A先占有锁，线程B挂起等待。</li>
