@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。  设置中断状态123456new Thread(() -&amp;gt; &amp;#">
+<meta name="description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。">
 <meta name="keywords" content="多线程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="线程的中断状态">
 <meta property="og:url" content="http://yoursite.com/2017/07/27/线程的中断状态/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。  设置中断状态123456new Thread(() -&amp;gt; &amp;#">
+<meta property="og:description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。">
 <meta property="og:updated_time" content="2017-07-27T14:46:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程的中断状态">
-<meta name="twitter:description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。  设置中断状态123456new Thread(() -&amp;gt; &amp;#">
+<meta name="twitter:description" content="一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。  中断相关的方法Thread类中，提供了和中断状态相关的三个方法：  isInterrupted()：检查是否发生中断。 interrupted()：检查是否发生中断，并且清除中断状态。 interrupt()：设置线程的中断状态，但并未发生中断。">
 
 
 
@@ -381,6 +381,7 @@
 <li><code>interrupted()</code>：检查是否发生中断，并且清除中断状态。</li>
 <li><code>interrupt()</code>：设置线程的中断状态，但并未发生中断。</li>
 </ol>
+<a id="more"></a>
 <h1 id="设置中断状态"><a href="#设置中断状态" class="headerlink" title="设置中断状态"></a>设置中断状态</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</div><div class="line">  <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">    System.out.println(<span class="string">"booting..."</span>);</div><div class="line">    Thread.currentThread().interrupt();<span class="comment">//设置中断状态</span></div><div class="line">  &#125;</div><div class="line">&#125;).start();</div></pre></td></tr></table></figure>
 <p>虽然设置了中断状态，但是线程并未停止，依旧在循环打印。</p>
 <p class="div-border-left-red"><code>interrupt()</code>方法只是设置了中断状态，线程并不会因此而挂起。如果要挂起，需要使用<code>LockSupport</code>类的<code>park()</code>    方法。</p>
@@ -438,6 +439,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/28/JUC-CLH队列简要分析/" rel="prev" title="JUC-CLH队列简要分析">
+                JUC-CLH队列简要分析 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -509,7 +514,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

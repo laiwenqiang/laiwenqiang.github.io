@@ -286,6 +286,117 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/JUC-CLH队列简要分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/28/JUC-CLH队列简要分析/" itemprop="url">JUC-CLH队列简要分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T22:52:08+08:00">
+                2017-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/27/线程的中断状态/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -375,8 +486,7 @@
 
       
         
-          
-            <blockquote>
+          <blockquote>
 <p>一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。</p>
 </blockquote>
 <h1 id="中断相关的方法"><a href="#中断相关的方法" class="headerlink" title="中断相关的方法"></a>中断相关的方法</h1><p>Thread类中，提供了和中断状态相关的三个方法：</p>
@@ -385,14 +495,13 @@
 <li><code>interrupted()</code>：检查是否发生中断，并且清除中断状态。</li>
 <li><code>interrupt()</code>：设置线程的中断状态，但并未发生中断。</li>
 </ol>
-<h1 id="设置中断状态"><a href="#设置中断状态" class="headerlink" title="设置中断状态"></a>设置中断状态</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</div><div class="line">  <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">    System.out.println(<span class="string">"booting..."</span>);</div><div class="line">    Thread.currentThread().interrupt();<span class="comment">//设置中断状态</span></div><div class="line">  &#125;</div><div class="line">&#125;).start();</div></pre></td></tr></table></figure>
-<p>虽然设置了中断状态，但是线程并未停止，依旧在循环打印。</p>
-<p class="div-border-left-red"><code>interrupt()</code>方法只是设置了中断状态，线程并不会因此而挂起。如果要挂起，需要使用<code>LockSupport</code>类的<code>park()</code>    方法。</p>
-
-<h1 id="interrupt的使用思路"><a href="#interrupt的使用思路" class="headerlink" title="interrupt的使用思路"></a>interrupt的使用思路</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> run &#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">while</span>(!Thread.currentThread().isInterrupted()) &#123;</div><div class="line">      <span class="comment">//doWork</span></div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">catch</span> ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>当线程的状态被设置为中断后，while()循环将不会执行，相当于中断了。</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/07/27/线程的中断状态/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -864,163 +973,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/16/线程通信之Condition条件变量/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/16/线程通信之Condition条件变量/" itemprop="url">线程通信之Condition条件变量</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-16T23:26:46+08:00">
-                2017-07-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">java基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>说到Lock就不得不说Condition条件变量，简单的说，作用类似于synchronized的wait和notify。但是，功能会更加强大一些。本文主要从Condition的用法着手，讲解一个例子。</p>
-</blockquote>
-<h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><ol>
-<li><p>三个线程，线程A、B和C，</p>
-</li>
-<li><p>A打印“01”，B打印“02”，C打印“03”，</p>
-</li>
-<li><p>并且<span class="inline-yellow">按照顺序循环打印</span>。</p>
-</li>
-</ol>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>这里的主要难点有两个，</p>
-<ol>
-<li><p>按照顺序打印。</p>
-<p>设置三个条件变量（condition），由前一个线程唤醒后一个线程，如此一来即可实现顺序打印。</p>
-</li>
-<li><p>前一个线程在执行完后，会唤醒后一个线程。在前一个线程唤醒后一个线程的时候，后一个线程可能还未处于的等待唤醒的状态。</p>
-<p>设置三个标志（flag），如果为true，表示当前任务处于准备好的状态，可以执行；否则表示为需要被前一个线程唤醒。</p>
-</li>
-</ol>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/16/线程通信之Condition条件变量/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1070,7 +1022,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
