@@ -392,7 +392,7 @@
 <ol>
 <li>线程A获取锁，执行到第8行，开始创建对象。</li>
 <li>同时，线程B执行到第5行，判断对象是否为null。</li>
-<li>线程B<code>if (singleton == null)</code>,判断结果为false，返回对象。</li>
+<li>线程B<code>if (singleton == null)</code>,判断结果为false，返回对象的引用。</li>
 <li>然而，此时线程A创建对象并未完全结束，造成线程B获取到的对象出现问题。</li>
 </ol>
 <h2 id="创建对象的步骤"><a href="#创建对象的步骤" class="headerlink" title="创建对象的步骤"></a>创建对象的步骤</h2><p>由于<code>new</code>一个对象并非原子性的，它是分为好几个步骤，所以导致上面的第4步出现问题。</p>
@@ -559,7 +559,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
