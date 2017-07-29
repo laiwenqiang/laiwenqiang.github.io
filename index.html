@@ -379,6 +379,21 @@
 <p>ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。</p>
 </blockquote>
 <h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="http://oqgq7175e.bkt.clouddn.com/ReentrantReadWriteLock.svg" alt=""></p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><ol>
+<li><p><strong>阻塞情况：</strong></p>
+<p>写锁会阻塞读/写锁，但是读锁只会阻塞写锁。也就是，写锁会独占资源，而读锁会和其他读锁共享资源。</p>
+</li>
+<li><p><strong>锁的转化：</strong></p>
+<p>写锁 —&gt; 读锁    <span class="inline-green">YES</span></p>
+<p>读锁 —&gt; 写锁    <span class="inline-red">NO</span></p>
+</li>
+<li><p><strong>state状态：</strong></p>
+<p>AQS中的state在这里划分为两部分，</p>
+<p>高16位bit表示读锁的持有次数，</p>
+<p>低16位bit表示写锁的持有次数。</p>
+</li>
+</ol>
+<p class="div-border-left-blue">最佳用法：在读取数据的线程多，而修改数据的线程少的情况下使用。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/07/29/JUC-ReentrantReadWriteLock解析/#more" rel="contents">

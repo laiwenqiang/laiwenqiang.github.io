@@ -93,18 +93,18 @@
 
 
 
-<meta name="description" content="ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。  UML图">
+<meta name="description" content="ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。  UML图 概要 阻塞情况： 写锁会阻塞读/写锁，但是读锁只会阻塞写锁。也就是，写锁会独占资源，而读锁会和其他读锁共享资源。  锁的转化： 写锁 —&amp;gt; 读锁    YES 读锁 —&amp;gt; 写锁">
 <meta name="keywords" content="多线程,JDK源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-ReentrantReadWriteLock解析">
 <meta property="og:url" content="http://yoursite.com/2017/07/29/JUC-ReentrantReadWriteLock解析/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。  UML图">
+<meta property="og:description" content="ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。  UML图 概要 阻塞情况： 写锁会阻塞读/写锁，但是读锁只会阻塞写锁。也就是，写锁会独占资源，而读锁会和其他读锁共享资源。  锁的转化： 写锁 —&amp;gt; 读锁    YES 读锁 —&amp;gt; 写锁">
 <meta property="og:image" content="http://oqgq7175e.bkt.clouddn.com/ReentrantReadWriteLock.svg">
 <meta property="og:updated_time" content="2017-07-29T04:19:10.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JUC-ReentrantReadWriteLock解析">
-<meta name="twitter:description" content="ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。  UML图">
+<meta name="twitter:description" content="ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。  UML图 概要 阻塞情况： 写锁会阻塞读/写锁，但是读锁只会阻塞写锁。也就是，写锁会独占资源，而读锁会和其他读锁共享资源。  锁的转化： 写锁 —&amp;gt; 读锁    YES 读锁 —&amp;gt; 写锁">
 <meta name="twitter:image" content="http://oqgq7175e.bkt.clouddn.com/ReentrantReadWriteLock.svg">
 
 
@@ -378,7 +378,6 @@
 <p>ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。</p>
 </blockquote>
 <h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="http://oqgq7175e.bkt.clouddn.com/ReentrantReadWriteLock.svg" alt=""></p>
-<a id="more"></a>
 <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><ol>
 <li><p><strong>阻塞情况：</strong></p>
 <p>写锁会阻塞读/写锁，但是读锁只会阻塞写锁。也就是，写锁会独占资源，而读锁会和其他读锁共享资源。</p>
@@ -395,6 +394,7 @@
 </ol>
 <p class="div-border-left-blue">最佳用法：在读取数据的线程多，而修改数据的线程少的情况下使用。</p>
 
+<a id="more"></a>
 <h1 id="ReadLock"><a href="#ReadLock" class="headerlink" title="ReadLock"></a>ReadLock</h1><p>ReentrantReadWriteLock的，<span class="inline-red">WriteLock是个独占锁，和ReentrantLock差不多。</span></p>
 <p>而ReadLock是个共享锁，有差别。</p>
 
