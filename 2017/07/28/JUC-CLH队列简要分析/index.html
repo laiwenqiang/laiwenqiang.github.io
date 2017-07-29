@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="多线程," />
 
 
 
@@ -93,16 +93,19 @@
 
 
 
-<meta name="description" content="大道如青天，男儿有求安得闲！">
+<meta name="description" content="之前有分析过AQS，然而CLH并未详细深入，这里特意作为补充。  结构图 Head节点是个傀儡节点，它只是指向一个node（或者Tail），它自身只有next指针（prev为null），并且它不存放线程。Tail节点，和其他正常的node节点一样，有前后两个指针，并且也存放着线程。  简要分析Node节点1234567891011121314151617181920212223242526272">
+<meta name="keywords" content="多线程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-CLH队列简要分析">
 <meta property="og:url" content="http://yoursite.com/2017/07/28/JUC-CLH队列简要分析/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:description" content="之前有分析过AQS，然而CLH并未详细深入，这里特意作为补充。  结构图 Head节点是个傀儡节点，它只是指向一个node（或者Tail），它自身只有next指针（prev为null），并且它不存放线程。Tail节点，和其他正常的node节点一样，有前后两个指针，并且也存放着线程。  简要分析Node节点1234567891011121314151617181920212223242526272">
+<meta property="og:image" content="http://oqgq7175e.bkt.clouddn.com/CLH2.svg">
 <meta property="og:updated_time" content="2017-07-28T14:52:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JUC-CLH队列简要分析">
-<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
+<meta name="twitter:description" content="之前有分析过AQS，然而CLH并未详细深入，这里特意作为补充。  结构图 Head节点是个傀儡节点，它只是指向一个node（或者Tail），它自身只有next指针（prev为null），并且它不存放线程。Tail节点，和其他正常的node节点一样，有前后两个指针，并且也存放着线程。  简要分析Node节点1234567891011121314151617181920212223242526272">
+<meta name="twitter:image" content="http://oqgq7175e.bkt.clouddn.com/CLH2.svg">
 
 
 
@@ -111,7 +114,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Mist',
-    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"left","display":"remove","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -325,6 +328,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -349,7 +374,31 @@
       
 
       
-        
+        <blockquote>
+<p>之前有分析过AQS，然而CLH并未详细深入，这里特意作为补充。</p>
+</blockquote>
+<h1 id="结构图"><a href="#结构图" class="headerlink" title="结构图"></a>结构图</h1><p><img src="http://oqgq7175e.bkt.clouddn.com/CLH2.svg" alt=""></p>
+<p class="div-border-left-red"><code>Head</code>节点是个傀儡节点，它只是指向一个node（或者Tail），它自身只有next指针（prev为null），并且它不存放线程。<br><br><code>Tail</code>节点，和其他正常的node节点一样，有前后两个指针，并且也存放着线程。</p>
+
+<h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><h2 id="Node节点"><a href="#Node节点" class="headerlink" title="Node节点"></a>Node节点</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Node SHARED = <span class="keyword">new</span> Node();</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Node EXCLUSIVE = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CANCELLED =  <span class="number">1</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIGNAL    = -<span class="number">1</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CONDITION = -<span class="number">2</span>;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PROPAGATE = -<span class="number">3</span>;</div><div class="line">    <span class="keyword">volatile</span> <span class="keyword">int</span> waitStatus;</div><div class="line">    <span class="keyword">volatile</span> Node prev;</div><div class="line">    <span class="keyword">volatile</span> Node next;</div><div class="line">    <span class="keyword">volatile</span> Thread thread;</div><div class="line">    Node nextWaiter;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isShared</span><span class="params">()</span> </span>&#123;</div><div class="line">      <span class="keyword">return</span> nextWaiter == SHARED;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">final</span> Node <span class="title">predecessor</span><span class="params">()</span> <span class="keyword">throws</span> NullPointerException </span>&#123;</div><div class="line">      Node p = prev;</div><div class="line">      <span class="keyword">if</span> (p == <span class="keyword">null</span>)</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</div><div class="line">      <span class="keyword">else</span></div><div class="line">        <span class="keyword">return</span> p;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Node() &#123;&#125;</div><div class="line"></div><div class="line">    Node(Thread thread, Node mode) &#123;</div><div class="line">      <span class="keyword">this</span>.nextWaiter = mode;</div><div class="line">      <span class="keyword">this</span>.thread = thread;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Node(Thread thread, <span class="keyword">int</span> waitStatus) &#123; </div><div class="line">      <span class="keyword">this</span>.waitStatus = waitStatus;</div><div class="line">      <span class="keyword">this</span>.thread = thread;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><ol>
+<li><p>双向链表，保存着被挂起线程的队列。</p>
+</li>
+<li><p>新增的元素会被放在队尾，而往外取元素的时候从队首取（FIFO）。</p>
+</li>
+<li><p>新增插入的时候，调用<code>enq()</code>方法进行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//enq()方法部分截取</span></div><div class="line">node.prev = t;</div><div class="line"><span class="keyword">if</span> (compareAndSetTail(t, node)) &#123;</div><div class="line">  t.next = node;</div><div class="line">  <span class="keyword">return</span> t;</div><div class="line"><span class="comment">//...</span></div></pre></td></tr></table></figure>
+<p class="div-border-left-red">从上面可以看出，由于是双向链表，对于新增节点的操作并非是原子性的。它先设置prev指针，然后在设置next指针。</p>
+</li>
+<li><p>取出节点时，调用<code>unparkSuccessor()</code>方法。</p>
+<p>Head指向的节点执行完后，唤醒下一个节点。</p>
+<p>如果下一个节点的状态为<font color="red">已经取消</font>，则从队列尾部开始遍历，取出距离Head最新的满足条件的节点，然后执行。</p>
+<p class="div-border-left-red">从尾部开始遍历的原因是，第3点“新增插入”的时候并非原子性造成的。由于对prev指针的设置总是先于next指针，从prev指针进行操作可以保证遍历到所有节点，不会有遗漏。</p>
+
+<p>​</p>
+</li>
+</ol>
+
       
     </div>
 
@@ -375,6 +424,12 @@
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
+          
+        </div>
       
 
       
@@ -423,105 +478,6 @@
 
 
         </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-
-      
-
-      
-
-      <section class="site-overview sidebar-panel sidebar-panel-active">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.png"
-               alt="laiwenqiang" />
-          <p class="site-author-name" itemprop="name">laiwenqiang</p>
-           
-              <p class="site-description motion-element" itemprop="description">大道如青天，男儿有求安得闲！</p>
-          
-        </div>
-        <nav class="site-state motion-element">
-
-          
-            <div class="site-state-item site-state-posts">
-              <a href="/archives/">
-                <span class="site-state-item-count">20</span>
-                <span class="site-state-item-name">日志</span>
-              </a>
-            </div>
-          
-
-          
-            
-            
-            <div class="site-state-item site-state-categories">
-              <a href="/categories/index.html">
-                <span class="site-state-item-count">5</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            
-            
-            <div class="site-state-item site-state-tags">
-              <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
-                <span class="site-state-item-name">标签</span>
-              </a>
-            </div>
-          
-
-        </nav>
-
-        
-
-        <div class="links-of-author motion-element">
-          
-            
-              <span class="links-of-author-item">
-                <a href="https://github.com/laiwenqiang" target="_blank" title="GitHub">
-                  
-                    <i class="fa fa-fw fa-github"></i>
-                  
-                  GitHub
-                </a>
-              </span>
-            
-          
-        </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-
-      
-
-    </div>
-  </aside>
-
-
         
       </div>
     </main>
