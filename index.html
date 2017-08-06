@@ -390,6 +390,7 @@
 <li>从队列中取出数据。</li>
 <li>如果当前的队列长度等于最大容量，在取出数据后会唤醒<code>put方法</code>中阻塞的线程。</li>
 </ol>
+<p class="div-border-left-green">这里主要是用Lock和Condition作为线程之间的协调。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/08/05/JUC-LinkedBlockingQueue解析/#more" rel="contents">
