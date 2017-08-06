@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="JDK源码,多线程," />
 
 
 
@@ -93,15 +93,19 @@
 
 
 
-<meta name="description" content="大道如青天，男儿有求安得闲！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="laiwenqiang">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="LinkedBlockingQueue是个阻塞队列，用于生产消费者模型，排队机制，FIFO。采用“two lock queue”算法，putLock和takeLock两个锁。  相关的队列还有， ArrayBlockingQueue：有界限，数组实现，大小无法改变。 PriorityBlockingQueue：无界限，有排列规则。 UML类图 主要方法梗概put 当前的大小如果不超过最大容量，可">
+<meta name="keywords" content="JDK源码,多线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC-LinkedBlockingQueue解析">
+<meta property="og:url" content="http://yoursite.com/2017/08/05/JUC-LinkedBlockingQueue解析/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:description" content="LinkedBlockingQueue是个阻塞队列，用于生产消费者模型，排队机制，FIFO。采用“two lock queue”算法，putLock和takeLock两个锁。  相关的队列还有， ArrayBlockingQueue：有界限，数组实现，大小无法改变。 PriorityBlockingQueue：无界限，有排列规则。 UML类图 主要方法梗概put 当前的大小如果不超过最大容量，可">
+<meta property="og:image" content="http://oqgq7175e.bkt.clouddn.com/LInkedBlockingQueue.svg">
+<meta property="og:updated_time" content="2017-08-05T09:30:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="laiwenqiang">
-<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
+<meta name="twitter:title" content="JUC-LinkedBlockingQueue解析">
+<meta name="twitter:description" content="LinkedBlockingQueue是个阻塞队列，用于生产消费者模型，排队机制，FIFO。采用“two lock queue”算法，putLock和takeLock两个锁。  相关的队列还有， ArrayBlockingQueue：有界限，数组实现，大小无法改变。 PriorityBlockingQueue：无界限，有排列规则。 UML类图 主要方法梗概put 当前的大小如果不超过最大容量，可">
+<meta name="twitter:image" content="http://oqgq7175e.bkt.clouddn.com/LInkedBlockingQueue.svg">
 
 
 
@@ -129,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/08/05/JUC-LinkedBlockingQueue解析/"/>
 
 
 
 
 
-  <title>laiwenqiang</title>
+  <title>JUC-LinkedBlockingQueue解析 | laiwenqiang</title>
   
 
 
@@ -160,9 +164,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -275,9 +277,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -303,9 +305,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/05/JUC-LinkedBlockingQueue解析/" itemprop="url">JUC-LinkedBlockingQueue解析</a></h1>
+          <h1 class="post-title" itemprop="name headline">JUC-LinkedBlockingQueue解析</h1>
         
 
         <div class="post-meta">
@@ -374,9 +374,7 @@
       
 
       
-        
-          
-            <blockquote>
+        <blockquote>
 <p>LinkedBlockingQueue是个阻塞队列，用于<code>生产消费者模型</code>，排队机制，FIFO。采用“two lock queue”算法，putLock和takeLock两个锁。</p>
 </blockquote>
 <p>相关的队列还有，</p>
@@ -394,601 +392,74 @@
 <h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><h2 id="put-方法"><a href="#put-方法" class="headerlink" title="put()方法"></a>put()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(E e)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (e == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</div><div class="line">        <span class="keyword">int</span> c = -<span class="number">1</span>;</div><div class="line">        Node&lt;E&gt; node = <span class="keyword">new</span> Node&lt;E&gt;(e);</div><div class="line">        <span class="keyword">final</span> ReentrantLock putLock = <span class="keyword">this</span>.putLock;</div><div class="line">        <span class="comment">//队列中的元素个数</span></div><div class="line">        <span class="keyword">final</span> AtomicInteger count = <span class="keyword">this</span>.count;</div><div class="line">        putLock.lockInterruptibly();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//容量满后，挂起</span></div><div class="line">            <span class="keyword">while</span> (count.get() == capacity) &#123;</div><div class="line">                notFull.await();</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//放入队列中</span></div><div class="line">            enqueue(node);</div><div class="line">            c = count.getAndIncrement();</div><div class="line">            <span class="comment">//这里暂时不理解</span></div><div class="line">            <span class="keyword">if</span> (c + <span class="number">1</span> &lt; capacity)</div><div class="line">                notFull.signal();</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            putLock.unlock();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (c == <span class="number">0</span>)</div><div class="line">            signalNotEmpty();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="take-方法"><a href="#take-方法" class="headerlink" title="take()方法"></a>take()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> E <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    E x;</div><div class="line">    <span class="keyword">int</span> c = -<span class="number">1</span>;</div><div class="line">    <span class="keyword">final</span> AtomicInteger count = <span class="keyword">this</span>.count;</div><div class="line">    <span class="keyword">final</span> ReentrantLock takeLock = <span class="keyword">this</span>.takeLock;</div><div class="line">    takeLock.lockInterruptibly();</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">while</span> (count.get() == <span class="number">0</span>) &#123;</div><div class="line">        notEmpty.await();</div><div class="line">      &#125;</div><div class="line">      x = dequeue();</div><div class="line">      c = count.getAndDecrement();</div><div class="line">      <span class="keyword">if</span> (c &gt; <span class="number">1</span>)</div><div class="line">        notEmpty.signal();</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">      takeLock.unlock();</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (c == capacity)</div><div class="line">      signalNotFull();</div><div class="line">    <span class="keyword">return</span> x;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/02/ThreadLocal解析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/02/ThreadLocal解析/" itemprop="url">ThreadLocal解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-02T23:38:56+08:00">
-                2017-08-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/JDK源码/" rel="tag"><i class="fa fa-tag"></i> JDK源码</a>
           
-            
+            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
           
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/29/JUC-ReentrantReadWriteLock解析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/29/JUC-ReentrantReadWriteLock解析/" itemprop="url">JUC-ReentrantReadWriteLock解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+              <a href="/2017/08/02/ThreadLocal解析/" rel="next" title="ThreadLocal解析">
+                <i class="fa fa-chevron-left"></i> ThreadLocal解析
+              </a>
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-29T12:19:10+08:00">
-                2017-07-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">java基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>ReentrantLock在之前已经整理完。在功能上，ReentrantReadWriteLock会比ReentrantLock更多样化，不过也更为复杂一些。但是他们的原理其实差不了多少。</p>
-</blockquote>
-<h1 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h1><p><img src="http://oqgq7175e.bkt.clouddn.com/ReentrantReadWriteLock00.svg" alt=""></p>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><ol>
-<li><p><strong>阻塞情况：</strong></p>
-<p>写锁会阻塞读/写锁，但是读锁只会阻塞写锁。也就是，写锁会独占资源，而读锁会和其他读锁共享资源。</p>
-</li>
-<li><p><strong>锁的转化：</strong></p>
-<p>写锁 —&gt; 读锁    <span class="inline-green">YES</span></p>
-<p>读锁 —&gt; 写锁    <span class="inline-red">NO</span></p>
-</li>
-<li><p><strong>state状态：</strong></p>
-<p>AQS中的state在这里划分为两部分，</p>
-<p>高16位bit表示读锁的持有次数，</p>
-<p>低16位bit表示写锁的持有次数。</p>
-</li>
-</ol>
-<p class="div-border-left-blue">最佳用法：在读取数据的线程多，而修改数据的线程少的情况下使用。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/29/JUC-ReentrantReadWriteLock解析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
 
-    <div>
-      
-    </div>
+          <span class="post-nav-divider"></span>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/28/JUC-CLH队列简要分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/28/JUC-CLH队列简要分析/" itemprop="url">JUC-CLH队列简要分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+          <div class="post-nav-prev post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-28T22:52:08+08:00">
-                2017-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">java基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>之前有分析过AQS，然而CLH并未详细深入，这里特意作为补充。</p>
-</blockquote>
-<h1 id="结构图"><a href="#结构图" class="headerlink" title="结构图"></a>结构图</h1><p><img src="http://oqgq7175e.bkt.clouddn.com/CLH2.svg" alt=""></p>
-<p class="div-border-left-red"><code>Head</code>节点是个傀儡节点，它只是指向一个node（或者Tail），它自身只有next指针（prev为null），并且它不存放线程。<br><br><code>Tail</code>节点，和其他正常的node节点一样，有前后两个指针，并且也存放着线程。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/28/JUC-CLH队列简要分析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/27/线程的中断状态/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/27/线程的中断状态/" itemprop="url">线程的中断状态</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-27T22:46:09+08:00">
-                2017-07-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">java基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <blockquote>
-<p>一个线程，可以设置它的中断状态，然而实际上被设置中断状态后的线程仍在运行着。</p>
-</blockquote>
-<h1 id="中断相关的方法"><a href="#中断相关的方法" class="headerlink" title="中断相关的方法"></a>中断相关的方法</h1><p>Thread类中，提供了和中断状态相关的三个方法：</p>
-<ol>
-<li><code>isInterrupted()</code>：检查是否发生中断。</li>
-<li><code>interrupted()</code>：检查是否发生中断，并且清除中断状态。</li>
-<li><code>interrupt()</code>：设置线程的中断状态，但并未发生中断。</li>
-</ol>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/27/线程的中断状态/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -996,6 +467,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -1103,10 +578,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
