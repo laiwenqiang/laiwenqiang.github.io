@@ -457,7 +457,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记06--容器/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="laiwenqiang">
@@ -476,7 +476,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/" itemprop="url">《How Tomcat Works》 笔记06 容器</a></h1>
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/" itemprop="url">《How Tomcat Works》 笔记02 一个简单的Servlet容器</a></h1>
         
 
         <div class="post-meta">
@@ -547,37 +547,48 @@
       
         
           <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。<br>所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
+<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
 </blockquote>
-<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>解析了<code>HttpProcessor</code>类的主要方法。</p>
+<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>在上面一章节中，</p>
 <ol>
-<li><code>await</code>和<code>assign</code>方法，用于线程的等待，和接收请求的作用。</li>
-<li><code>process</code>方法，处理请求。</li>
+<li>运用Socket和ServerSocket，</li>
+<li>并且在遵循HTTP协议的规范下，创建了一个简单的Web容器。</li>
 </ol>
-<p>同时，我们还自己实现了一个简单的Container容器。</p>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>本章节探讨容器。</p>
-<p>容器是一个处理用户请求并返回对象给web用户的模块。</p>
-<p>在接口<code>org.apache.catalina.Container</code>中，定义了四种容器的形式：Engine（引擎），Host（主机），Context（上下文），Wrapper（包装器）。</p>
-<p>本章节介绍Context和Wrapper。</p>
-<h1 id="接口容器"><a href="#接口容器" class="headerlink" title="接口容器"></a>接口容器</h1><p>一个容 器必须实现<code>org.apache.catalina.Container</code>接口。</p>
-<p>调用流程是：</p>
+<font color="red"><strong>该容器的主要工作流程是，</strong></font>
+
 <ol>
-<li>通过Connector的setContainer方法，将容器传递进去。</li>
-<li>Connector会调用容器的<code>invoke</code>方法。</li>
+<li>用ServerSocket创建服务端，启动8080端口监听请求，</li>
+<li>客户端一旦发送Socket请求，</li>
+<li>解析HTTP Request，获取URI路径。</li>
+<li>依据URI寻找资源，</li>
+<li>如果存在该资源，按照HTTP Response规范返回内容；</li>
+<li>如果不存在，按照HTTP Response规范返回404。</li>
 </ol>
-<h2 id="四种不同的容器"><a href="#四种不同的容器" class="headerlink" title="四种不同的容器"></a>四种不同的容器</h2><p>他们分别是：</p>
+<p>这个容器还抽象出了Request和Response类，用来处理消息。然而，只能返回本地文件内容，不能做业务逻辑处理。并且，我们是用自己的HttpServer这个类来直接操作，显然不符合设计规范。因此，引入Servlet这个概念，用来处理业务逻辑。</p>
+<hr>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>本章节，主要通过两个程序来开发自己的Servlet容器。</p>
 <ol>
-<li>Engine（引擎），表示整个Catalina的Servlet引擎。</li>
-<li>Host（主机），表示一个拥有多个上下文的虚拟主机。</li>
-<li>Context（上下文），表示一个Web应用，一个Context包含一个多多个Wrapper。</li>
-<li>Wrapper（包装器），表示一个独立的Servlet。</li>
+<li>第一个简单，用于理解一个Servlet容器的工作原理。</li>
+<li>第二个稍微复杂。</li>
 </ol>
-<p>他们的标准实现是：StandardEngine，StandardHost，StandardContext，StandardWrapper。他们都扩展于抽象类CantainerBase类。都是<code>org.apache.catalina.core</code>包的一部分。</p>
-<h2 id="层次关系"><a href="#层次关系" class="headerlink" title="层次关系"></a>层次关系</h2><p>一个容器可以有一个或者多个低层次上的子容器。</p>
-<p>例如一个Context有一个卡或者多个Wrapper，而Wrapper是容器中层次最低的，所有它不能包含子容器。</p>
+<hr>
+<h1 id="javax-servlet-Servlet接口"><a href="#javax-servlet-Servlet接口" class="headerlink" title="javax.servlet.Servlet接口"></a><strong>javax.servlet.Servlet接口</strong></h1><p>谈到Servlet，自然就要运用到<code>javax.servlet.Servlet</code>接口。我们接下来用到的Servlet就要实现这个接口，该接口拥有五个方法。</p>
+<ol>
+<li><code>public void init(ServletConfig config) throws ServletException</code></li>
+<li><code>public void service(ServletRequest request, ServletResponse response) 
+ throws ServletException, java.io.IOException</code></li>
+<li><code>public void destroy()</code></li>
+<li><code>public ServletConfig getServletConfig()</code></li>
+<li><code>public java.lang.String getServletInfo()</code></li>
+</ol>
+<h2 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a><strong>Servlet生命周期</strong></h2><p>一个老生常谈的话题了。<br>简要来说，就是：<font color="red">init初始化 —&gt; service处理请求 —&gt; destroy销毁。</font></p>
+<p>在处理service请求的时候，<strong>Servlet容器</strong>会传递一个<code>javax.servlet.ServletRequest</code>对象和 <code>javax.servlet.ServletResponse</code> 对象，用来处理请求和相应。在一个Servlet生命周期里，service方法会被多次调用。</p>
+<p>当从服务器中移除一个Servlet实例的时候，会调用destroy方法。<br>这通常发生在 servlet 容器正在被关闭或者 servlet 容器需要一些空闲内存的时候。</p>
+<p>具体点，就是：</p>
+<font color="red"><br>1. 客户端发送对某个Servlet的请求，<br>2. 如果服务器里没有该Servlet实例，会调用该Servlet的init方法进行初始化；<br>3. 如果有，init方法不被调用。<br>4. 处理请求，调用service方法。返回结果。<br>5. 如果Servlet容器（服务器）被关闭，或者内存不足，会调用Servlet的destroy方法。<br>   </font>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/#more" rel="contents">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
