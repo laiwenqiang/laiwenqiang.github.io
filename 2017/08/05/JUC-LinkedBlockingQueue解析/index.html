@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="多线程,JDK源码," />
+  <meta name="keywords" content="JDK源码,多线程," />
 
 
 
@@ -94,7 +94,7 @@
 
 
 <meta name="description" content="LinkedBlockingQueue是个阻塞队列，用于生产消费者模型，排队机制，FIFO。采用“two lock queue”算法，putLock和takeLock两个锁。  相关的队列还有， ArrayBlockingQueue：有界限，数组实现，大小无法改变。 PriorityBlockingQueue：无界限，有排列规则。 UML类图 主要方法梗概put 当前的大小如果不超过最大容量，可">
-<meta name="keywords" content="多线程,JDK源码">
+<meta name="keywords" content="JDK源码,多线程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC-LinkedBlockingQueue解析">
 <meta property="og:url" content="http://yoursite.com/2017/08/05/JUC-LinkedBlockingQueue解析/index.html">
@@ -393,6 +393,17 @@
 
 <a id="more"></a>
 <h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><h2 id="put-方法"><a href="#put-方法" class="headerlink" title="put()方法"></a>put()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(E e)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (e == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</div><div class="line">        <span class="keyword">int</span> c = -<span class="number">1</span>;</div><div class="line">        Node&lt;E&gt; node = <span class="keyword">new</span> Node&lt;E&gt;(e);</div><div class="line">        <span class="keyword">final</span> ReentrantLock putLock = <span class="keyword">this</span>.putLock;</div><div class="line">        <span class="comment">//队列中的元素个数</span></div><div class="line">        <span class="keyword">final</span> AtomicInteger count = <span class="keyword">this</span>.count;</div><div class="line">        putLock.lockInterruptibly();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//容量满后，挂起</span></div><div class="line">            <span class="keyword">while</span> (count.get() == capacity) &#123;</div><div class="line">                notFull.await();</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//放入队列中</span></div><div class="line">            enqueue(node);</div><div class="line">            c = count.getAndIncrement();</div><div class="line">            <span class="comment">//这里暂时不理解</span></div><div class="line">            <span class="keyword">if</span> (c + <span class="number">1</span> &lt; capacity)</div><div class="line">                notFull.signal();</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            putLock.unlock();</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//如果队列里没有数据，take操作会被挂起，由这里唤醒。</span></div><div class="line">        <span class="keyword">if</span> (c == <span class="number">0</span>)</div><div class="line">            signalNotEmpty();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><span class="inline-red">对于上面的第18行代码，也就是if (c + 1 &lt; capacity)这里，表示存有疑问。</span></p>
+<p><strong>因为，</strong></p>
+<ol>
+<li>put操作会阻塞在putLock（独占写锁）上，</li>
+<li><code>notFull</code>的作用是，当队列满后，获取到写锁的put操作会被挂起。</li>
+<li>也就是说<code>notFull</code>是由take操作唤醒的。（取出数据后，队列不为空了，去通知notFull将挂起的线程唤醒。这样就可以继续写入数据。）</li>
+<li>而第18行代码<code>if (c + 1 &lt; capacity)</code>的意思是，由<code>put</code>操作去唤醒阻塞住的写操作，</li>
+<li>然而，阻塞到<code>notFull</code>的线程其实最多只会存在一个（因为putLock是独占的），</li>
+<li>代码执行到这里时，已经没有堵塞在<code>notFull</code>上的线程了。</li>
+</ol>
+<p>所以这里的唤醒操作是否多余呢？</p>
 <h2 id="take-方法"><a href="#take-方法" class="headerlink" title="take()方法"></a>take()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> E <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    E x;</div><div class="line">    <span class="keyword">int</span> c = -<span class="number">1</span>;</div><div class="line">    <span class="keyword">final</span> AtomicInteger count = <span class="keyword">this</span>.count;</div><div class="line">    <span class="keyword">final</span> ReentrantLock takeLock = <span class="keyword">this</span>.takeLock;</div><div class="line">    takeLock.lockInterruptibly();</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">while</span> (count.get() == <span class="number">0</span>) &#123;</div><div class="line">        notEmpty.await();</div><div class="line">      &#125;</div><div class="line">      <span class="comment">//出队操作</span></div><div class="line">      x = dequeue();</div><div class="line">      c = count.getAndDecrement();</div><div class="line">      <span class="keyword">if</span> (c &gt; <span class="number">1</span>)</div><div class="line">        notEmpty.signal();</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">      takeLock.unlock();</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//如果队列满了，put操作会被挂起，由这里唤醒。</span></div><div class="line">    <span class="keyword">if</span> (c == capacity)</div><div class="line">      signalNotFull();</div><div class="line">    <span class="keyword">return</span> x;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
       
@@ -423,9 +434,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
-          
             <a href="/tags/JDK源码/" rel="tag"><i class="fa fa-tag"></i> JDK源码</a>
+          
+            <a href="/tags/多线程/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
           
         </div>
       
