@@ -550,7 +550,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记06--容器/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="laiwenqiang">
@@ -569,7 +569,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/" itemprop="url">《How Tomcat Works》 笔记06 容器</a></h1>
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/" itemprop="url">《How Tomcat Works》 笔记01 一个简单的Web容器</a></h1>
         
 
         <div class="post-meta">
@@ -640,41 +640,213 @@
       
         
           <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。<br>所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
+<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
 </blockquote>
-<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>解析了<code>HttpProcessor</code>类的主要方法。</p>
+<p>本章节，简要介绍HTTP协议，并且实现一个简陋的web服务器。<br>主要运用到java.net.Socket和java.net.ServerSocket，并且通过Http消息和客户端进行通信。</p>
+<hr>
+<h1 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a><strong>HTTP协议</strong></h1><p>（基本上是书上的概念搬过来。）</p>
+<h2 id="HTTP-Request"><a href="#HTTP-Request" class="headerlink" title="HTTP Request"></a><strong>HTTP Request</strong></h2><p>一个HTTP请求，包含三部分：</p>
 <ol>
-<li><code>await</code>和<code>assign</code>方法，用于线程的等待，和接收请求的作用。</li>
-<li><code>process</code>方法，处理请求。</li>
+<li>Method–URI–Protocol/version</li>
+<li>Request headers</li>
+<li>Entity body</li>
 </ol>
-<p>同时，我们还自己实现了一个简单的Container容器。</p>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>本章节探讨容器。</p>
-<p>容器是一个处理用户请求并返回对象给web用户的模块。</p>
-<p>在接口<code>org.apache.catalina.Container</code>中，定义了四种容器的形式：Engine（引擎），Host（主机），Context（上下文），Wrapper（包装器）。</p>
-<p>本章节介绍Context和Wrapper。</p>
-<h1 id="接口容器"><a href="#接口容器" class="headerlink" title="接口容器"></a>接口容器</h1><p>一个容 器必须实现<code>org.apache.catalina.Container</code>接口。</p>
-<p>调用流程是：</p>
+<p>例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">POST /examples/default.jsp HTTP/1.1 Accept: text/plain; text/html Accept-Language: en-gb</div><div class="line">Connection: Keep-Alive</div><div class="line">Host: localhost</div><div class="line">User-Agent: Mozilla/4.0 (compatible; MSIE 4.01; Windows 98) Content-Length: 33</div><div class="line">Content-Type: application/x-www-form-urlencoded Accept-Encoding: gzip, deflate</div><div class="line"></div><div class="line">lastName=Franks&amp;firstName=Michael</div></pre></td></tr></table></figure></p>
+<p>请求方法包括：GET、POST、HEAD、OPTIONS、PUT、DELETE 和 TRACE。</p>
+<p>URI 指明了请求资源的地址，通常是从网站更目录开始计算的一个相对路径，因此它总是以斜线“ /”开头的。<br>URL 实际上是 URI 的一种类型。</p>
+<p>请求头(header)中包含了一些关于客户端环境和请求实体(entity)的有用的信息。<br>例如，客户端浏览器所使用的语言，请求实体信息的长度等。<br>每个请求头使用 CRLF(回车换行符，“\r\n”)分隔。</p>
+<p>注意请求头的格式:<br>请求头名+英文空格+请求头值</p>
+<p>请求头和请求实体之间有一个空白行(CRLF)。这是 HTTP 协议规定的格式。HTTP 服务器，以此确定请求实体是从哪里开始的。</p>
+<p>上面的例子中，请求实体是:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lastName=Franks&amp;firstName=Michael</div></pre></td></tr></table></figure></p>
+<h2 id="HTTP-Response"><a href="#HTTP-Response" class="headerlink" title="HTTP Response"></a><strong>HTTP Response</strong></h2><p>HTTP Response也有三部分，</p>
 <ol>
-<li>通过Connector的setContainer方法，将容器传递进去。</li>
-<li>Connector会调用容器的<code>invoke</code>方法。</li>
+<li>Protocol–Status Code –Description</li>
+<li>Response heads</li>
+<li>Entity body</li>
 </ol>
-<h2 id="四种不同的容器"><a href="#四种不同的容器" class="headerlink" title="四种不同的容器"></a>四种不同的容器</h2><p>他们分别是：</p>
+<p>例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">HTTP/1.1 200 OK</div><div class="line">Server: Microsoft-IIS/4.0</div><div class="line">Date: Mon, 5 Jan 2004 13:13:33 GMT Content-Type: text/html</div><div class="line">Last-Modified: Mon, 5 Jan 2004 13:13:12 GMT Content-Length: 112</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;title&gt;HTTP Response Example&lt;/title&gt; &lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">Welcome to Brainy Software</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>注意响应实体(entity)与响应头(header)之间有一个空白行(CRLF)。</p>
+<hr>
+<h1 id="Socket和ServerSocket"><a href="#Socket和ServerSocket" class="headerlink" title="Socket和ServerSocket"></a><strong>Socket和ServerSocket</strong></h1><p>Socket类表示一个客户端，而ServerSocket表示一个服务端。连接的流程如下，</p>
 <ol>
-<li>Engine（引擎），表示整个Catalina的Servlet引擎。</li>
-<li>Host（主机），表示一个拥有多个上下文的虚拟主机。</li>
-<li>Context（上下文），表示一个Web应用，一个Context包含一个多多个Wrapper。</li>
-<li>Wrapper（包装器），表示一个独立的Servlet。</li>
+<li>在服务端建立ServerSocket，等待请求。</li>
+<li>一旦请求来，则创建一个Socket连接，进行通信。</li>
 </ol>
-<p>他们的标准实现是：StandardEngine，StandardHost，StandardContext，StandardWrapper。他们都扩展于抽象类CantainerBase类。都是<code>org.apache.catalina.core</code>包的一部分。</p>
-<h2 id="层次关系"><a href="#层次关系" class="headerlink" title="层次关系"></a>层次关系</h2><p>一个容器可以有一个或者多个低层次上的子容器。</p>
-<p>例如一个Context有一个卡或者多个Wrapper，而Wrapper是容器中层次最低的，所有它不能包含子容器。</p>
+<hr>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记06--容器/#more" rel="contents">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记01--一个简单的Web容器/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
           <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index">
+                    <span itemprop="name">tomcat</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
+</blockquote>
+<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>构建了一个简单的Servlet容器，</p>
+<ol>
+<li>运用<code>javax.servlet.ServletRequest</code>和<code>javax.servlet.ServletResponse</code>，我们实现了自己的Request和Response。</li>
+<li>我们把请求划分为两类，一种是请求静态资源，读取文件后返回消息；</li>
+<li>另外一种是Servlet请求，包含业务逻辑。</li>
+<li>对于Servlet请求，我们的容器会调用该Servlet的service方法进行处理。</li>
+<li>值得注意的是，调用Servlet实例的时候，我们的容器会启用类加载机制动态的把Servlet类load进来，从而实例化它。</li>
+</ol>
+<hr>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>上节还有个尾巴，对于这个Servlet容器存在不安全的地方，下面详细改善。</p>
+<hr>
+<h1 id="不安全的地方"><a href="#不安全的地方" class="headerlink" title="不安全的地方"></a><strong>不安全的地方</strong></h1><p>在<code>HttpServer1.java</code>这个类里面。有这样一段代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	      servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">	      <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">	     servlet.service(request, response);</div><div class="line">	 &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	        e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们的代码会将编写好的Servlet加载进来，然后将Request和Response作为参数传递进去。</p>
+<p>我们在编写在Servlet的时候，可以接收到类型为<code>ServletRequest</code>和<code>ServletResponse</code>的实例（他们作为参数传递进来了）。即使如此，依旧可以把他们强制转化为<code>com.ex02.pyrmont.Request</code>和<code>com.ex02.pyrmont.Response</code>。这两个类里面有<code>parse</code>、<code>parseUri</code>、<code>sendStaticResource</code>，这些核心方法。所以在Servlet里面，能够很轻松地对这些方法进行调用。显然是不安全的。</p>
+<hr>
+<h1 id="改进方法"><a href="#改进方法" class="headerlink" title="改进方法"></a><strong>改进方法</strong></h1><h2 id="添加默认修饰符"><a href="#添加默认修饰符" class="headerlink" title="添加默认修饰符"></a><strong>添加默认修饰符</strong></h2><p>这个方法是，<br>让 <code>Request</code> 和<code>Response</code>类拥有默认访问修饰，所以它们不能在<code>ex02.pyrmont</code>包的外部使用。</p>
+<h2 id="使用Facade（外观）设计模式"><a href="#使用Facade（外观）设计模式" class="headerlink" title="使用Facade（外观）设计模式"></a><strong>使用Facade（外观）设计模式</strong></h2><p>书上说这种方式更为优雅，而上面那个更为简单。<br>但是我觉得，这种方式是在某些不能够更改源码的情况下，会显得很眼前一亮。</p>
+<p>主要的思路就是，</p>
+<ol>
+<li>创建RequestFacade，实现ServletRequest接口。</li>
+<li>创建ResponseFacade，实现ServletResponse接口。</li>
+<li>在Facade里面，持有对<code>Request/Response</code>的引用，并且设置为<strong>private</strong>的。</li>
+</ol>
+<p>这样，Servlet获取到的是Facade，无法对里面的<code>Request/Response</code>进行操作。</p>
+<h2 id="封装Request"><a href="#封装Request" class="headerlink" title="封装Request"></a><strong>封装Request</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.RequestDispatcher;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletInputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequest;</div><div class="line"><span class="keyword">import</span> java.io.BufferedReader;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</div><div class="line"><span class="keyword">import</span> java.util.Enumeration;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">*  Created by laiwenqiang on 2017/5/17.</div><div class="line">   */</div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestFacade</span> <span class="keyword">implements</span> <span class="title">ServletRequest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServletRequest request;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RequestFacade</span> <span class="params">(ServletRequest request)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.request = request;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getAttribute</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> request.getAttribute(s);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getAttributeNames</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> request.getAttributeNames();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//后面省略</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h2 id="封装Response"><a href="#封装Response" class="headerlink" title="封装Response"></a><strong>封装Response</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletOutputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletResponse;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">*  Created by laiwenqiang on 2017/5/17.</div><div class="line">   */</div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseFacade</span> <span class="keyword">implements</span> <span class="title">ServletResponse</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServletResponse response = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResponseFacade</span><span class="params">(Response response)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.response = response;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getCharacterEncoding</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> response.getCharacterEncoding();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletOutputStream <span class="title">getOutputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">return</span> response.getOutputStream();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">   <span class="comment">//后面省略</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h2 id="修改ServletProcessor"><a href="#修改ServletProcessor" class="headerlink" title="修改ServletProcessor"></a><strong>修改ServletProcessor</strong></h2><p>在调用Servlet的地方改为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//这里和ServletProcessor1不同，运用外观设计模式</span></div><div class="line">Servlet servlet = <span class="keyword">null</span>;</div><div class="line">RequestFacade requestFacade = <span class="keyword">new</span> RequestFacade(request);</div><div class="line">ResponseFacade responseFacade = <span class="keyword">new</span> ResponseFacade(response);</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">       servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">       <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">       servlet.service(requestFacade, responseFacade);</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="修改HttpServer"><a href="#修改HttpServer" class="headerlink" title="修改HttpServer"></a><strong>修改HttpServer</strong></h2><p>最后，将主程序调用<code>ServletProcessor1.java</code>的地方修改下即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(request.getUri().startsWith(<span class="string">"/servlet/"</span>)) &#123;</div><div class="line">                    <span class="comment">//启用相对安全的ServletProcessor2</span></div><div class="line">        ServletProcessor2 processor = <span class="keyword">new</span> ServletProcessor2();</div><div class="line">    	processor.process(request, response);</div><div class="line"></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">		StaticResourceProcessor processor = <span class="keyword">new</span> StaticResourceProcessor();</div><div class="line">		processor.process(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>一步一个脚印</p>
+<p>本章完成，(^__^)</p>
+
+          
         
       
     </div>
@@ -852,173 +1024,6 @@
             </a>
           </div>
           <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
-                2017-06-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tomcat/" itemprop="url" rel="index">
-                    <span itemprop="name">tomcat</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
-</blockquote>
-<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>构建了一个简单的Servlet容器，</p>
-<ol>
-<li>运用<code>javax.servlet.ServletRequest</code>和<code>javax.servlet.ServletResponse</code>，我们实现了自己的Request和Response。</li>
-<li>我们把请求划分为两类，一种是请求静态资源，读取文件后返回消息；</li>
-<li>另外一种是Servlet请求，包含业务逻辑。</li>
-<li>对于Servlet请求，我们的容器会调用该Servlet的service方法进行处理。</li>
-<li>值得注意的是，调用Servlet实例的时候，我们的容器会启用类加载机制动态的把Servlet类load进来，从而实例化它。</li>
-</ol>
-<hr>
-<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a><strong>概要</strong></h1><p>上节还有个尾巴，对于这个Servlet容器存在不安全的地方，下面详细改善。</p>
-<hr>
-<h1 id="不安全的地方"><a href="#不安全的地方" class="headerlink" title="不安全的地方"></a><strong>不安全的地方</strong></h1><p>在<code>HttpServer1.java</code>这个类里面。有这样一段代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	      servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">	      <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">	     servlet.service(request, response);</div><div class="line">	 &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">	        e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>我们的代码会将编写好的Servlet加载进来，然后将Request和Response作为参数传递进去。</p>
-<p>我们在编写在Servlet的时候，可以接收到类型为<code>ServletRequest</code>和<code>ServletResponse</code>的实例（他们作为参数传递进来了）。即使如此，依旧可以把他们强制转化为<code>com.ex02.pyrmont.Request</code>和<code>com.ex02.pyrmont.Response</code>。这两个类里面有<code>parse</code>、<code>parseUri</code>、<code>sendStaticResource</code>，这些核心方法。所以在Servlet里面，能够很轻松地对这些方法进行调用。显然是不安全的。</p>
-<hr>
-<h1 id="改进方法"><a href="#改进方法" class="headerlink" title="改进方法"></a><strong>改进方法</strong></h1><h2 id="添加默认修饰符"><a href="#添加默认修饰符" class="headerlink" title="添加默认修饰符"></a><strong>添加默认修饰符</strong></h2><p>这个方法是，<br>让 <code>Request</code> 和<code>Response</code>类拥有默认访问修饰，所以它们不能在<code>ex02.pyrmont</code>包的外部使用。</p>
-<h2 id="使用Facade（外观）设计模式"><a href="#使用Facade（外观）设计模式" class="headerlink" title="使用Facade（外观）设计模式"></a><strong>使用Facade（外观）设计模式</strong></h2><p>书上说这种方式更为优雅，而上面那个更为简单。<br>但是我觉得，这种方式是在某些不能够更改源码的情况下，会显得很眼前一亮。</p>
-<p>主要的思路就是，</p>
-<ol>
-<li>创建RequestFacade，实现ServletRequest接口。</li>
-<li>创建ResponseFacade，实现ServletResponse接口。</li>
-<li>在Facade里面，持有对<code>Request/Response</code>的引用，并且设置为<strong>private</strong>的。</li>
-</ol>
-<p>这样，Servlet获取到的是Facade，无法对里面的<code>Request/Response</code>进行操作。</p>
-<h2 id="封装Request"><a href="#封装Request" class="headerlink" title="封装Request"></a><strong>封装Request</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.RequestDispatcher;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletInputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequest;</div><div class="line"><span class="keyword">import</span> java.io.BufferedReader;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</div><div class="line"><span class="keyword">import</span> java.util.Enumeration;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">*  Created by laiwenqiang on 2017/5/17.</div><div class="line">   */</div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestFacade</span> <span class="keyword">implements</span> <span class="title">ServletRequest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServletRequest request;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RequestFacade</span> <span class="params">(ServletRequest request)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.request = request;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getAttribute</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> request.getAttribute(s);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getAttributeNames</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> request.getAttributeNames();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//后面省略</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<h2 id="封装Response"><a href="#封装Response" class="headerlink" title="封装Response"></a><strong>封装Response</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ex02.pyrmont;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletOutputStream;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletResponse;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"><span class="keyword">import</span> java.util.Locale;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">*  Created by laiwenqiang on 2017/5/17.</div><div class="line">   */</div><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseFacade</span> <span class="keyword">implements</span> <span class="title">ServletResponse</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServletResponse response = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResponseFacade</span><span class="params">(Response response)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.response = response;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getCharacterEncoding</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> response.getCharacterEncoding();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletOutputStream <span class="title">getOutputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">return</span> response.getOutputStream();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">   <span class="comment">//后面省略</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<h2 id="修改ServletProcessor"><a href="#修改ServletProcessor" class="headerlink" title="修改ServletProcessor"></a><strong>修改ServletProcessor</strong></h2><p>在调用Servlet的地方改为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//这里和ServletProcessor1不同，运用外观设计模式</span></div><div class="line">Servlet servlet = <span class="keyword">null</span>;</div><div class="line">RequestFacade requestFacade = <span class="keyword">new</span> RequestFacade(request);</div><div class="line">ResponseFacade responseFacade = <span class="keyword">new</span> ResponseFacade(response);</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">       servlet = (Servlet) myClass.newInstance();</div><div class="line"></div><div class="line">       <span class="comment">//3. 调用Servlet的service方法</span></div><div class="line"></div><div class="line">       servlet.service(requestFacade, responseFacade);</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="修改HttpServer"><a href="#修改HttpServer" class="headerlink" title="修改HttpServer"></a><strong>修改HttpServer</strong></h2><p>最后，将主程序调用<code>ServletProcessor1.java</code>的地方修改下即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(request.getUri().startsWith(<span class="string">"/servlet/"</span>)) &#123;</div><div class="line">                    <span class="comment">//启用相对安全的ServletProcessor2</span></div><div class="line">        ServletProcessor2 processor = <span class="keyword">new</span> ServletProcessor2();</div><div class="line">    	processor.process(request, response);</div><div class="line"></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">		StaticResourceProcessor processor = <span class="keyword">new</span> StaticResourceProcessor();</div><div class="line">		processor.process(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<hr>
-<p>一步一个脚印</p>
-<p>本章完成，(^__^)</p>
-
-          
         
       
     </div>

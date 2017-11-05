@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="第三部分">
+<meta name="description" content="第三部分 在数据库系统的设计中考虑了检测死锁以及从死锁中恢复。 执行一个事物时可能需要获取多个锁，并且一直持有这些锁直到事物提交。因此在两个事物之间很可能发生死锁，但事实上这种情况并不多见。当他监测到一组事物发生了死锁（通过在表示等待关系的有向图中搜索循环），将选择一个牺牲者并放弃该事物。  如果所有的线程都一固定的顺序来获取锁，那么在程序中就不会出现顺序死锁的问题。  在指定锁的顺序的时候，可以">
 <meta name="keywords" content="多线程,Java并发编程实战笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="读书笔记03-Java并发编程实战">
 <meta property="og:url" content="http://yoursite.com/2017/11/04/读书笔记03-Java并发编程实战/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="第三部分">
+<meta property="og:description" content="第三部分 在数据库系统的设计中考虑了检测死锁以及从死锁中恢复。 执行一个事物时可能需要获取多个锁，并且一直持有这些锁直到事物提交。因此在两个事物之间很可能发生死锁，但事实上这种情况并不多见。当他监测到一组事物发生了死锁（通过在表示等待关系的有向图中搜索循环），将选择一个牺牲者并放弃该事物。  如果所有的线程都一固定的顺序来获取锁，那么在程序中就不会出现顺序死锁的问题。  在指定锁的顺序的时候，可以">
 <meta property="og:updated_time" content="2017-11-04T03:20:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="读书笔记03-Java并发编程实战">
-<meta name="twitter:description" content="第三部分">
+<meta name="twitter:description" content="第三部分 在数据库系统的设计中考虑了检测死锁以及从死锁中恢复。 执行一个事物时可能需要获取多个锁，并且一直持有这些锁直到事物提交。因此在两个事物之间很可能发生死锁，但事实上这种情况并不多见。当他监测到一组事物发生了死锁（通过在表示等待关系的有向图中搜索循环），将选择一个牺牲者并放弃该事物。  如果所有的线程都一固定的顺序来获取锁，那么在程序中就不会出现顺序死锁的问题。  在指定锁的顺序的时候，可以">
 
 
 
@@ -372,7 +372,58 @@
       
 
       
-        <h1 id="第三部分"><a href="#第三部分" class="headerlink" title="第三部分"></a>第三部分</h1>
+        <h1 id="第三部分"><a href="#第三部分" class="headerlink" title="第三部分"></a>第三部分</h1><ol>
+<li><p>在数据库系统的设计中考虑了检测死锁以及从死锁中恢复。</p>
+<p class="div-border-left-red">执行一个事物时可能需要获取多个锁，并且一直持有这些锁直到事物提交。因此在两个事物之间很可能发生死锁，但事实上这种情况并不多见。当他监测到一组事物发生了死锁（通过在表示等待关系的有向图中搜索循环），将选择一个牺牲者并放弃该事物。</p>
+</li>
+<li><p>如果所有的线程都一固定的顺序来获取锁，那么在程序中就不会出现顺序死锁的问题。</p>
+</li>
+<li><p>在指定锁的顺序的时候，可以使用<code>System.identifyHashCode</code>方法。</p>
+<p>例如，一个银行转账的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object tieLock = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transferMoney</span><span class="params">(<span class="keyword">final</span> Account fromAcct, <span class="keyword">final</span>  Account toAcct, <span class="keyword">final</span> DollarAmount amount)</span> </span>&#123;</div><div class="line">  	</div><div class="line">  	<span class="comment">// check</span></div><div class="line">  </div><div class="line">  	<span class="keyword">int</span> fromHash = System.identifyHashCode(fromAcct);</div><div class="line">  	<span class="keyword">int</span> toHash = System.identifyHashCode(toAcct);</div><div class="line">  	</div><div class="line">  	<span class="keyword">if</span>(fromHash &lt; toHash) &#123;</div><div class="line">      	<span class="keyword">synchronized</span>(fromAcct) &#123;</div><div class="line">          	<span class="keyword">synchronized</span>(toAcct) &#123;</div><div class="line">            	<span class="comment">// transfer</span></div><div class="line">          	&#125;</div><div class="line">      	&#125;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(fromHash &gt; toHash) &#123;</div><div class="line">      	<span class="keyword">synchronized</span>(toAcct) &#123;</div><div class="line">        	<span class="keyword">synchronized</span>(fromHash) &#123; </div><div class="line">            	<span class="comment">// transfer</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      	<span class="keyword">synchronized</span>(tieLock) &#123; </div><div class="line">        	<span class="keyword">synchronized</span>(fromAcct) &#123; </div><div class="line">            	<span class="keyword">synchronized</span>(toAcct) &#123; </div><div class="line">                	<span class="comment">// transfer</span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">      	&#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果fromAcct和toAcct的散列值一样，会执行第三个判断，用tieLock来加锁。<font color="red">tieLock是否有必要？</font></p>
+<a id="more"></a>
+</li>
+<li><p>如果在持有锁的时候调用某个外部方法，那么将出现活跃性问题。</p>
+<p>在这个外部方法中可能会获取其他锁（可能产生死锁），或者阻塞时间过长，导致其他线程无法及时获得当前被持有的锁。</p>
+</li>
+<li><p>如果在调用某个方法时不需要持有锁，那么这种调用被称为<strong>开放调用</strong>。</p>
+</li>
+<li><p>在使用细粒度锁的程序中，可以通过<code>两阶段策略（Two-Part Strategy）</code>来检查代码中的死锁。</p>
+<p class="div-border-left-red">1. 首相找出在什么地方将获取多个（使这个集合尽量小），<br>2. 然后对所有这些实例进行全局分析，从而确保他们在整个程序中获取锁的顺序都保持一致。<br>3. 尽可能使用开发调用，将极大地简化分析过程。</p>
+</li>
+<li><p>显示使用<code>Lock</code>类中的定时<code>tryLock</code>功能来代替内置锁机制可以检测死锁和从死锁中恢复过来。</p>
+</li>
+<li><p>JVM通过现场转储（Thread Dump）来帮助来识别死锁的发生。包括：</p>
+<ol>
+<li><p>各个运行中的线程的栈追踪信息，这类似于发生异常时的栈追踪信息。</p>
+</li>
+<li><p>加锁信息，例如每个线程持有哪些锁，在哪些帧中获取过这些锁，以及被阻塞的线程正在等待获取哪一个锁。</p>
+</li>
+</ol>
+</li>
+<li><p>最常见的活跃性故障就是<span class="inline-red">锁顺序死锁</span>。</p>
+<p>在设计时应该避免产生顺序死锁：确保线程在获取多个锁时采用一致的顺序。</p>
+</li>
+<li><p>“快速排序”算法在大规模的数据集上的执行效率非常高，但是对于小规模数据而言，“冒泡排序”实际上更高效。</p>
+</li>
+<li><p>很多性能优化措施通常都是以牺牲可读性或者可维护性作为代价–代码越是“聪明”或者越是“晦涩”，就越难以理解和维护。</p>
+</li>
+<li><p>如果可运行的线程数量大于CPU数量，那么操作系统最终会将某个正在运行的线程调度出来，从而使其他线程能够使用CPU。这将会导致一次上下文切换，在这个过程中将保存当前线程的执行上下文，并将新调度进来的线程的执行上下文设置为当前上下文。</p>
+<p class="div-border-left-green">切换上下文需要一定的开销，而在线程调度过程中需要访问由操作系统和JVM共享的数据结构。<br>当一个新的线程被切换进来的时候，它所谓的数据结构可能不在当前处理器的本地缓存中，导致切换时间的增加。</p>
+</li>
+<li><p>在<code>synchronized</code>和<code>volatile</code>提供的可见性保证中可能会使用一些特殊的指令，例如内存栅栏（Memory Barrier）。内存栅栏可以可以刷新内存，使内存无效。刷新硬件的写缓存，已经停止执行管道。内存战狼可能会对性能带来简介影响，因为他们将抑制一些编译器的优化操作。在内存栅栏中，大多数操作都是不能被重排序的。</p>
+</li>
+<li><p>JVM在实现阻塞行为时，可以采用<font color="red">自旋等待</font>（Spin-Waiting，指通过循环不断尝试获取锁，直到成功）或者通过操作系统挂起被阻塞的线程。</p>
+</li>
+<li><p>一种减小锁的持有时间的方式是降低线程请求锁的频率（从而减小发生竞争的可能性）。可以通过锁分解和锁分段等技术来实现，这些技术中采用多个相互独立的锁来保护独立的状态变量。</p>
+</li>
+<li><p><span class="inline-green">锁分解</span>：如果一个锁需要保护多个相互独立的状态，那么可以将这个锁分解为多个锁，并且每个锁值保护一个变量，从而提高可伸缩性，并且最终降低每个锁被请求的频率。</p>
+</li>
+<li><p><span class="inline-green">锁分段</span>：</p>
+</li>
+</ol>
+
       
     </div>
 

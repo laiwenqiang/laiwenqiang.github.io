@@ -375,9 +375,23 @@
 
       
         
-          
-            <h1 id="第三部分"><a href="#第三部分" class="headerlink" title="第三部分"></a>第三部分</h1>
-          
+          <h1 id="第三部分"><a href="#第三部分" class="headerlink" title="第三部分"></a>第三部分</h1><ol>
+<li><p>在数据库系统的设计中考虑了检测死锁以及从死锁中恢复。</p>
+<p class="div-border-left-red">执行一个事物时可能需要获取多个锁，并且一直持有这些锁直到事物提交。因此在两个事物之间很可能发生死锁，但事实上这种情况并不多见。当他监测到一组事物发生了死锁（通过在表示等待关系的有向图中搜索循环），将选择一个牺牲者并放弃该事物。</p>
+</li>
+<li><p>如果所有的线程都一固定的顺序来获取锁，那么在程序中就不会出现顺序死锁的问题。</p>
+</li>
+<li><p>在指定锁的顺序的时候，可以使用<code>System.identifyHashCode</code>方法。</p>
+<p>例如，一个银行转账的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object tieLock = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transferMoney</span><span class="params">(<span class="keyword">final</span> Account fromAcct, <span class="keyword">final</span>  Account toAcct, <span class="keyword">final</span> DollarAmount amount)</span> </span>&#123;</div><div class="line">  	</div><div class="line">  	<span class="comment">// check</span></div><div class="line">  </div><div class="line">  	<span class="keyword">int</span> fromHash = System.identifyHashCode(fromAcct);</div><div class="line">  	<span class="keyword">int</span> toHash = System.identifyHashCode(toAcct);</div><div class="line">  	</div><div class="line">  	<span class="keyword">if</span>(fromHash &lt; toHash) &#123;</div><div class="line">      	<span class="keyword">synchronized</span>(fromAcct) &#123;</div><div class="line">          	<span class="keyword">synchronized</span>(toAcct) &#123;</div><div class="line">            	<span class="comment">// transfer</span></div><div class="line">          	&#125;</div><div class="line">      	&#125;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(fromHash &gt; toHash) &#123;</div><div class="line">      	<span class="keyword">synchronized</span>(toAcct) &#123;</div><div class="line">        	<span class="keyword">synchronized</span>(fromHash) &#123; </div><div class="line">            	<span class="comment">// transfer</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      	<span class="keyword">synchronized</span>(tieLock) &#123; </div><div class="line">        	<span class="keyword">synchronized</span>(fromAcct) &#123; </div><div class="line">            	<span class="keyword">synchronized</span>(toAcct) &#123; </div><div class="line">                	<span class="comment">// transfer</span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">      	&#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果fromAcct和toAcct的散列值一样，会执行第三个判断，用tieLock来加锁。<font color="red">tieLock是否有必要？</font></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/11/04/读书笔记03-Java并发编程实战/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
