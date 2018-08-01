@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="how tomcat works 读书笔记," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -93,17 +93,15 @@
 
 
 
-<meta name="description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾构建了一个简单的Servlet容器，  运用javax.servlet.ServletRequest和javax.servlet.ServletResponse，我们">
-<meta name="keywords" content="how tomcat works 读书笔记">
-<meta property="og:type" content="article">
-<meta property="og:title" content="《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)">
-<meta property="og:url" content="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/index.html">
+<meta name="description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:type" content="website">
+<meta property="og:title" content="laiwenqiang">
+<meta property="og:url" content="http://yoursite.com/page/7/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾构建了一个简单的Servlet容器，  运用javax.servlet.ServletRequest和javax.servlet.ServletResponse，我们">
-<meta property="og:updated_time" content="2017-06-27T15:33:13.000Z">
+<meta property="og:description" content="大道如青天，男儿有求安得闲！">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)">
-<meta name="twitter:description" content="这本书(How Tomcat Works 中文下载地址)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在GitHub上面。O(∩_∩)O  上节回顾构建了一个简单的Servlet容器，  运用javax.servlet.ServletRequest和javax.servlet.ServletResponse，我们">
+<meta name="twitter:title" content="laiwenqiang">
+<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
 
 
 
@@ -131,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/"/>
+  <link rel="canonical" href="http://yoursite.com/page/7/"/>
 
 
 
 
 
-  <title>《How Tomcat Works》 笔记03 一个简单的Servlet容器(续) | laiwenqiang</title>
+  <title>laiwenqiang</title>
   
 
 
@@ -162,7 +160,9 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <div class="container sidebar-position-left 
+   page-home 
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -275,9 +275,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -303,7 +303,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记03--一个简单的Servlet容器（续）/" itemprop="url">《How Tomcat Works》 笔记03 一个简单的Servlet容器(续)</a></h1>
         
 
         <div class="post-meta">
@@ -372,7 +374,9 @@
       
 
       
-        <blockquote>
+        
+          
+            <blockquote>
 <p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
 </blockquote>
 <h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a><strong>上节回顾</strong></h1><p>构建了一个简单的Servlet容器，</p>
@@ -407,72 +411,46 @@
 <p>一步一个脚印</p>
 <p>本章完成，(^__^)</p>
 
+          
+        
       
     </div>
 
     <div>
       
-        
-
-      
     </div>
 
     <div>
       
-        
-
-      
     </div>
 
     <div>
-      
-        
-
       
     </div>
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/how-tomcat-works-读书笔记/" rel="tag"><i class="fa fa-tag"></i> how tomcat works 读书笔记</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/24/HowTomcatWorks学习笔记02--一个简单的Servlet容器/" rel="prev" title="《How Tomcat Works》 笔记02 一个简单的Servlet容器">
-                《How Tomcat Works》 笔记02 一个简单的Servlet容器 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+  </nav>
+
 
 
           </div>
@@ -480,10 +458,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-  </div>
-
 
         </div>
         
@@ -591,10 +565,10 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-
+  
 
   
 
