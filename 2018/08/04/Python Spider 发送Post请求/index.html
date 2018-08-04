@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考晚上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
+<meta name="description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考网上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
 <meta name="keywords" content="Python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python Spider 发送Post请求">
 <meta property="og:url" content="http://yoursite.com/2018/08/04/Python Spider 发送Post请求/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考晚上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
+<meta property="og:description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考网上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
 <meta property="og:updated_time" content="2018-08-04T04:04:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python Spider 发送Post请求">
-<meta name="twitter:description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考晚上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
+<meta name="twitter:description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考网上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
 
 
 
@@ -353,12 +353,13 @@
         <blockquote>
 <p>上一章节，已经能够获取网页内容。这里需要实现发送post请求。</p>
 </blockquote>
-<p>参考晚上的例子，选择重写<code>start_requests(self)</code>方法：</p>
+<p>参考网上的例子，选择重写<code>start_requests(self)</code>方法：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(self)</span>:</span></div><div class="line">        url = <span class="string">'http://query.shenzhentong.com:8080/sztnet/qryCard.do'</span></div><div class="line"></div><div class="line">        <span class="keyword">yield</span> scrapy.FormRequest(</div><div class="line">            url=url,</div><div class="line">            formdata=&#123;<span class="string">"cardno"</span>: <span class="string">"698474623"</span>&#125;, <span class="comment"># request 参数</span></div><div class="line">            callback=self.parse_page</div><div class="line">        )</div></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>自定义回调函数：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_page</span><span class="params">(self, response)</span>:</span></div><div class="line">        <span class="keyword">print</span> response.text</div><div class="line">        <span class="keyword">pass</span></div></pre></td></tr></table></figure>
-<p>以上是就是发送post的代码，执行后可获取对应卡号的信息：</p>
+<p>以上是就是发送post的代码。</p>
+<p>执行后可获取对应卡号的信息：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ableact'&gt;<span class="tag">&lt;<span class="name">tr</span>&gt;</span><span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#E4F2F3'</span>&gt;</span>卡号：<span class="tag">&lt;/<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#FFFFFF'</span>&gt;</span>698474623<span class="tag">&lt;/<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#E4F2F3'</span> <span class="attr">id</span>=<span class="string">'cardRealAmt'</span> <span class="attr">width</span>=<span class="string">10%</span> <span class="attr">nowrap</span>&gt;</span>卡内余额(截止到2018-05-11 19:31:31)：<span class="tag">&lt;/<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#FFFFFF'</span> <span class="attr">align</span>=<span class="string">'right'</span>&gt;</span>4.20元<span class="tag">&lt;/<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#E4F2F3'</span> <span class="attr">id</span>=<span class="string">'expDate'</span> <span class="attr">width</span>=<span class="string">10%</span> <span class="attr">nowrap</span>&gt;</span>卡有效截止日期：<span class="tag">&lt;/<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#FFFFFF'</span> <span class="attr">align</span>=<span class="string">'right'</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span><span class="tag">&lt;/<span class="name">tr</span>&gt;</span><span class="tag">&lt;/<span class="name">table</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></div></pre></td></tr></table></figure>
 
       
