@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考网上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
+<meta name="description" content="得到整个网页后，我们要从中截取有效信息，即使用xpath。  在回调函数里，做一些修改： 12345678910111213def parse_page(self, response):        # print response.text        card_real_amt = &apos;//td[@id=&quot;cardRealAmt&quot;]&apos;        for val in response.">
 <meta name="keywords" content="Python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python Spider 发送Post请求">
-<meta property="og:url" content="http://yoursite.com/2018/08/04/Python Spider 发送Post请求/index.html">
+<meta property="og:title" content="Python Spider xpath获取具体信息">
+<meta property="og:url" content="http://yoursite.com/2018/08/05/Python Spider xpath获取具体信息/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考网上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
-<meta property="og:updated_time" content="2018-08-04T04:04:52.000Z">
+<meta property="og:description" content="得到整个网页后，我们要从中截取有效信息，即使用xpath。  在回调函数里，做一些修改： 12345678910111213def parse_page(self, response):        # print response.text        card_real_amt = &apos;//td[@id=&quot;cardRealAmt&quot;]&apos;        for val in response.">
+<meta property="og:updated_time" content="2018-08-05T10:01:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Python Spider 发送Post请求">
-<meta name="twitter:description" content="上一章节，已经能够获取网页内容。这里需要实现发送post请求。  参考网上的例子，选择重写start_requests(self)方法： 12345678def start_requests(self):        url = &apos;http://query.shenzhentong.com:8080/sztnet/qryCard.do&apos;        yield scrapy.FormRequ">
+<meta name="twitter:title" content="Python Spider xpath获取具体信息">
+<meta name="twitter:description" content="得到整个网页后，我们要从中截取有效信息，即使用xpath。  在回调函数里，做一些修改： 12345678910111213def parse_page(self, response):        # print response.text        card_real_amt = &apos;//td[@id=&quot;cardRealAmt&quot;]&apos;        for val in response.">
 
 
 
@@ -131,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/04/Python Spider 发送Post请求/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/08/05/Python Spider xpath获取具体信息/"/>
 
 
 
 
 
-  <title>Python Spider 发送Post请求 | laiwenqiang</title>
+  <title>Python Spider xpath获取具体信息 | laiwenqiang</title>
   
 
 
@@ -286,7 +286,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/04/Python Spider 发送Post请求/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/Python Spider xpath获取具体信息/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="laiwenqiang">
@@ -303,7 +303,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Python Spider 发送Post请求</h1>
+          <h1 class="post-title" itemprop="name headline">Python Spider xpath获取具体信息</h1>
         
 
         <div class="post-meta">
@@ -315,8 +315,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T12:04:52+08:00">
-                2018-08-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-05T18:01:17+08:00">
+                2018-08-05
               </time>
             
 
@@ -351,16 +351,12 @@
 
       
         <blockquote>
-<p>上一章节，已经能够获取网页内容。这里需要实现发送post请求。</p>
+<p>得到整个网页后，我们要从中截取有效信息，即使用xpath。</p>
 </blockquote>
-<p>参考网上的例子，选择重写<code>start_requests(self)</code>方法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(self)</span>:</span></div><div class="line">        url = <span class="string">'http://query.shenzhentong.com:8080/sztnet/qryCard.do'</span></div><div class="line"></div><div class="line">        <span class="keyword">yield</span> scrapy.FormRequest(</div><div class="line">            url=url,</div><div class="line">            formdata=&#123;<span class="string">"cardno"</span>: <span class="string">"698474623"</span>&#125;,  <span class="comment"># TODO 目前cardno写死</span></div><div class="line">            callback=self.parse_page</div><div class="line">        )</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>自定义回调函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_page</span><span class="params">(self, response)</span>:</span></div><div class="line">        <span class="keyword">print</span> response.text</div><div class="line">        <span class="keyword">pass</span></div></pre></td></tr></table></figure>
-<p>以上是就是发送post的代码。</p>
-<p>执行后可获取对应卡号的信息：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">cellspacing</span>=<span class="string">'1'</span> <span class="attr">cellpadding</span>=<span class="string">'2'</span> <span class="attr">class</span>=<span class="string">'tableact'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">tr</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#E4F2F3'</span>&gt;</span></div><div class="line">              卡号：</div><div class="line">        <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#FFFFFF'</span>&gt;</span></div><div class="line">               698474623</div><div class="line">        <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#E4F2F3'</span> <span class="attr">id</span>=<span class="string">'cardRealAmt'</span> <span class="attr">width</span>=<span class="string">"10%"</span> <span class="attr">nowrap</span>&gt;</span></div><div class="line">               卡内余额(截止到2018-05-11 19:31:31)：</div><div class="line">        <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#FFFFFF'</span> <span class="attr">align</span>=<span class="string">'right'</span>&gt;</span></div><div class="line">               4.20元</div><div class="line">        <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#E4F2F3'</span> <span class="attr">id</span>=<span class="string">'expDate'</span> <span class="attr">width</span>=<span class="string">"10%"</span> <span class="attr">nowrap</span>&gt;</span></div><div class="line">               卡有效截止日期：</div><div class="line">        <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">td</span> <span class="attr">bgcolor</span>=<span class="string">'#FFFFFF'</span> <span class="attr">align</span>=<span class="string">'right'</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>在回调函数里，做一些修改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_page</span><span class="params">(self, response)</span>:</span></div><div class="line">        <span class="comment"># print response.text</span></div><div class="line">        card_real_amt = <span class="string">'//td[@id="cardRealAmt"]'</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> val <span class="keyword">in</span> response.xpath(card_real_amt + <span class="string">'/text()'</span>).extract():  <span class="comment"># 数组</span></div><div class="line">            <span class="keyword">print</span> val</div><div class="line"></div><div class="line">        <span class="keyword">for</span> val <span class="keyword">in</span> response.xpath(card_real_amt + <span class="string">'/../td[2]/text()'</span>).extract():</div><div class="line">            <span class="keyword">print</span> val</div><div class="line"></div><div class="line">        <span class="keyword">for</span> val <span class="keyword">in</span> response.xpath(card_real_amt + <span class="string">'/../td[4]/text()'</span>).extract():</div><div class="line">            <span class="keyword">print</span> val</div><div class="line">        <span class="keyword">pass</span></div></pre></td></tr></table></figure>
+<p>打印结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">卡内余额(截止到<span class="number">2018</span><span class="number">-05</span><span class="number">-11</span> <span class="number">19</span>:<span class="number">31</span>:<span class="number">31</span>)：</div><div class="line"><span class="number">698474623</span></div><div class="line"><span class="number">4.20</span>元</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -403,8 +399,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/01/Python Spider 获取网页内容/" rel="next" title="Python Spider 获取网页内容">
-                <i class="fa fa-chevron-left"></i> Python Spider 获取网页内容
+              <a href="/2018/08/04/Python Spider 发送Post请求/" rel="next" title="Python Spider 发送Post请求">
+                <i class="fa fa-chevron-left"></i> Python Spider 发送Post请求
               </a>
             
           </div>
@@ -412,10 +408,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/05/Python Spider xpath获取具体信息/" rel="prev" title="Python Spider xpath获取具体信息">
-                Python Spider xpath获取具体信息 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
