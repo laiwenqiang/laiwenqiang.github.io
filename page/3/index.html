@@ -392,7 +392,7 @@
 <li><p><strong>最低安全性</strong>：在没有同步的情况下读取变量，得到的值可能已经过期。但是这个值是由之前某个线程设置的，而非一个随机的值。（java内存模型）</p>
 </li>
 <li><p>对于非volatile类型的64位数值变量（double和long），最低安全性不生效。</p>
-<p class="div-border-left-green">java内存模型要求，变量的读取和写入操作都必须是原子性。但是对于double和long，jvm允许将64位的读/写分为两个32位进行操作。</p>
+<p class="div-border-left-green">java内存模型要求，变量的读取和写入操作都必须是原子性。但是对于double和long，jvm允许将64位的读/写分为两个32位进行操作。</p></li></ol>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/11/02/读书笔记01-Java并发编程实战/#more" rel="contents">
