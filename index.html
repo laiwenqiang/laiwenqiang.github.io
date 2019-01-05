@@ -328,6 +328,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -362,7 +384,7 @@
 <p><font color="red">worker</font>包括多个EventLoop，用于处理Channel上所有的读写事件。一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel。</p>
 <p>当然，有时候boss和worker可以是同一个。</p>
 <p>boss和worker都会调用regiter方法，只是boss注册的是<code>Selectionkey.OP_ACCEPT</code>，而worker是<code>Selectionkey.OP_READ</code>。</p>
-<h1 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h1><p><img src="/2018/12/26/Netty笔记-boss和worker创建/EventLoopGroup.svg" alt=""></p>
+<h1 id="EventLoopGroup类图"><a href="#EventLoopGroup类图" class="headerlink" title="EventLoopGroup类图"></a>EventLoopGroup类图</h1><p><img src="/2018/12/26/Netty笔记-boss和worker创建/EventLoopGroup.svg" alt=""></p>
 <p>一个EventLoopGroup包括一个或者多个EventLoop。</p>
           <!--noindex-->
           <div class="post-button text-center">
