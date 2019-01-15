@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync(); 调用方法链ServerBootstrap(AbstractBootstrap).bind() -&amp;gt">
+<meta name="description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync();">
 <meta name="keywords" content="Netty源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Nettty笔记-boss启动监听">
 <meta property="og:url" content="http://yoursite.com/2019/01/12/Nettty笔记-boss启动监听/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync(); 调用方法链ServerBootstrap(AbstractBootstrap).bind() -&amp;gt">
+<meta property="og:description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync();">
 <meta property="og:updated_time" content="2019-01-12T02:33:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nettty笔记-boss启动监听">
-<meta name="twitter:description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync(); 调用方法链ServerBootstrap(AbstractBootstrap).bind() -&amp;gt">
+<meta name="twitter:description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync();">
 
 
 
@@ -377,7 +377,8 @@
 </blockquote>
 <h1 id="调用时机"><a href="#调用时机" class="headerlink" title="调用时机"></a>调用时机</h1><p>通常，在执行这段代码的时候，会进行：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ChannelFuture future = bootstrap.bind().sync();</div></pre></td></tr></table></figure>
-<h1 id="调用方法链"><a href="#调用方法链" class="headerlink" title="调用方法链"></a>调用方法链</h1><p><code>ServerBootstrap(AbstractBootstrap).bind()</code> -&gt;</p>
+<a id="more"></a>
+<h1 id="调用方法链"><a href="#调用方法链" class="headerlink" title="调用方法链"></a>调用方法链</h1><p>ServerBootstrap(AbstractBootstrap).bind()` -&gt;</p>
 <p><code>ServerBootstrap(AbstractBootstrap).doBind(SocketAddress)</code> -&gt;</p>
 <p><code>ServerBootstrap(AbstractBootstrap).initAndRegister()</code> // 获取boss，进行初始化及注册 -&gt;</p>
 <p><code>ServerBoostrap.init(Channel)</code> // 这里会调用pipeline.addLast()方法，并且向boss添加任务（pipeline相关，后面再详细梳理） -&gt;</p>

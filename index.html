@@ -375,19 +375,18 @@
 
       
         
-          
-            <blockquote>
+          <blockquote>
 <p>boss 用于监听请求和分配任务，这里分析其启动监听的流程。<br>本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。</p>
 </blockquote>
 <h1 id="调用时机"><a href="#调用时机" class="headerlink" title="调用时机"></a>调用时机</h1><p>通常，在执行这段代码的时候，会进行：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ChannelFuture future = bootstrap.bind().sync();</div></pre></td></tr></table></figure>
-<h1 id="调用方法链"><a href="#调用方法链" class="headerlink" title="调用方法链"></a>调用方法链</h1><p><code>ServerBootstrap(AbstractBootstrap).bind()</code> -&gt;</p>
-<p><code>ServerBootstrap(AbstractBootstrap).doBind(SocketAddress)</code> -&gt;</p>
-<p><code>ServerBootstrap(AbstractBootstrap).initAndRegister()</code> // 获取boss，进行初始化及注册 -&gt;</p>
-<p><code>ServerBoostrap.init(Channel)</code> // 这里会调用pipeline.addLast()方法，并且向boss添加任务（pipeline相关，后面再详细梳理） -&gt;</p>
-<p><code>NioEventLoopGroup(MultithreadEventLoopGroup).register(Channel)</code> -&gt;</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/01/12/Nettty笔记-boss启动监听/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
