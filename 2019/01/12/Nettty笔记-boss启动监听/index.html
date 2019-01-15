@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Netty源码," />
 
 
 
@@ -93,15 +93,17 @@
 
 
 
-<meta name="description" content="大道如青天，男儿有求安得闲！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="laiwenqiang">
-<meta property="og:url" content="http://yoursite.com/archives/2018/08/index.html">
+<meta name="description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync(); 调用方法链ServerBootstrap(AbstractBootstrap).bind() -&amp;gt">
+<meta name="keywords" content="Netty源码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nettty笔记-boss启动监听">
+<meta property="og:url" content="http://yoursite.com/2019/01/12/Nettty笔记-boss启动监听/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="大道如青天，男儿有求安得闲！">
+<meta property="og:description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync(); 调用方法链ServerBootstrap(AbstractBootstrap).bind() -&amp;gt">
+<meta property="og:updated_time" content="2019-01-12T02:33:45.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="laiwenqiang">
-<meta name="twitter:description" content="大道如青天，男儿有求安得闲！">
+<meta name="twitter:title" content="Nettty笔记-boss启动监听">
+<meta name="twitter:description" content="boss 用于监听请求和分配任务，这里分析其启动监听的流程。本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。  调用时机通常，在执行这段代码的时候，会进行： 1ChannelFuture future = bootstrap.bind().sync(); 调用方法链ServerBootstrap(AbstractBootstrap).bind() -&amp;gt">
 
 
 
@@ -129,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2018/08/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/01/12/Nettty笔记-boss启动监听/"/>
 
 
 
 
 
-  <title>归档 | laiwenqiang</title>
+  <title>Nettty笔记-boss启动监听 | laiwenqiang</title>
   
 
 
@@ -160,7 +162,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -274,213 +276,179 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-       
-      
-      OK! 目前共计 37 篇日志。 继续努力。
-    </span>
-
+  <div id="posts" class="posts-expand">
     
-
-      
-      
-      
-
-      
-        
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
-        </div>
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/08/12/Python Spider 解析验证码/" itemprop="url">
-              
-                <span itemprop="name">Python Spider 验证码解析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-08-12T22:50:30+08:00"
-              content="2018-08-12" >
-          08-12
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/08/10/Python Spider 数据存储mysql/" itemprop="url">
-              
-                <span itemprop="name">Python Spider 数据存储mysql</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-08-10T23:49:06+08:00"
-              content="2018-08-10" >
-          08-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/08/05/Python Spider xpath获取具体信息/" itemprop="url">
-              
-                <span itemprop="name">Python Spider xpath获取具体信息</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-08-05T18:01:17+08:00"
-              content="2018-08-05" >
-          08-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/08/04/Python Spider 发送Post请求/" itemprop="url">
-              
-                <span itemprop="name">Python Spider 发送Post请求</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-08-04T12:04:52+08:00"
-              content="2018-08-04" >
-          08-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/08/01/Python Spider 获取网页内容/" itemprop="url">
-              
-                <span itemprop="name">Python Spider 获取网页内容</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-08-01T22:37:15+08:00"
-              content="2018-08-01" >
-          08-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-  </section>
 
   
 
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/12/Nettty笔记-boss启动监听/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Nettty笔记-boss启动监听</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-12T10:33:45+08:00">
+                2019-01-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>boss 用于监听请求和分配任务，这里分析其启动监听的流程。<br>本章节主要分为分为三部分：注册，绑定localAddress，和监听OP_ACCEPT。</p>
+</blockquote>
+<h1 id="调用时机"><a href="#调用时机" class="headerlink" title="调用时机"></a>调用时机</h1><p>通常，在执行这段代码的时候，会进行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ChannelFuture future = bootstrap.bind().sync();</div></pre></td></tr></table></figure>
+<h1 id="调用方法链"><a href="#调用方法链" class="headerlink" title="调用方法链"></a>调用方法链</h1><p><code>ServerBootstrap(AbstractBootstrap).bind()</code> -&gt;</p>
+<p><code>ServerBootstrap(AbstractBootstrap).doBind(SocketAddress)</code> -&gt;</p>
+<p><code>ServerBootstrap(AbstractBootstrap).initAndRegister()</code> // 获取boss，进行初始化及注册 -&gt;</p>
+<p><code>ServerBoostrap.init(Channel)</code> // 这里会调用pipeline.addLast()方法，并且向boss添加任务（pipeline相关，后面再详细梳理） -&gt;</p>
+<p><code>NioEventLoopGroup(MultithreadEventLoopGroup).register(Channel)</code> -&gt;</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Netty源码/" rel="tag"><i class="fa fa-tag"></i> Netty源码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/26/Netty笔记-boss和worker创建/" rel="next" title="Netty笔记_boss和worker创建">
+                <i class="fa fa-chevron-left"></i> Netty笔记_boss和worker创建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -488,6 +456,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -595,11 +567,9 @@
   
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
 
 
   
