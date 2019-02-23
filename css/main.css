@@ -1682,7 +1682,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #1a3262;
+  background: #95ad8e;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -3011,4 +3011,11 @@ p.div-border-top-purple {
   border-top-width: 5px;
   border-radius: 3px;
   border-top-color: #9954bb;
+}
+p.div-border-dashed {
+  display: block;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px dashed #ccc;
+  border-radius: 3px;
 }
