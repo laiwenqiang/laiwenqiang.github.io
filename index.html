@@ -286,6 +286,128 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/02/Netty笔记04_worker注册/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/02/Netty笔记04_worker注册/" itemprop="url">Netty笔记04_worker注册</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-02T15:36:19+08:00">
+                2019-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>boss分配任务后，worker就进入<code>NioEventLoop#run()</code>方法区执行任务：注册及绑定监听。</p>
+</blockquote>
+<h1 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h1><p>worker的注册功能可以参考boss的注册，基本一样。</p>
+<p>先回顾下boss在ServerBootstrap$ServerBootstrapAcceptor中分配任务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"><span class="comment">// childGroup就是worker</span></div><div class="line"><span class="comment">// child就是由worker创建的NioSocketChannel对象</span></div><div class="line"><span class="comment">// worker开始注册</span></div><div class="line">childGroup.register(child).addListener(<span class="keyword">new</span> ChannelFutureListener()) &#123;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>剩下的，最终就是会调用AbstractChannel$AbstractUnsafe#resigert0() -&gt; AbstractNioChannel#doRegister()，如此即完成注册。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/03/02/Netty笔记04_worker注册/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/28/Netty笔记03_boss监听请求和分配任务/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -777,129 +899,6 @@
 </ol>
 <h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1>
           
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/10/Python Spider 数据存储mysql/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/10/Python Spider 数据存储mysql/" itemprop="url">Python Spider 数据存储mysql</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-10T23:49:06+08:00">
-                2018-08-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>在Scrapy中，我们需要做的就是在spider的<code>parse_page</code>中组装Item，然后在pipeline的<code>process_item</code>中将Item存储起来即可。</p>
-</blockquote>
-<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><h2 id="安装MySQL-python"><a href="#安装MySQL-python" class="headerlink" title="安装MySQL-python"></a>安装MySQL-python</h2><p><code>sudo pip install MySQL-python</code></p>
-<p>如果出现<span class="inline-red">EnvironmentError: mysql_config not found </span>错误，先运行：</p>
-<p><code>ln -s /usr/local/mysql/bin/mysql_config /usr/local/bin/mysql_config</code></p>
-<h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><h2 id="修改items-py"><a href="#修改items-py" class="headerlink" title="修改items.py"></a>修改items.py</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> scrapy</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SztSpiderItem</span><span class="params">(scrapy.Item)</span>:</span></div><div class="line">    <span class="comment"># define the fields for your item here like:</span></div><div class="line">    <span class="comment"># name = scrapy.Field()</span></div><div class="line">    <span class="keyword">pass</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TicketInfoItem</span><span class="params">(scrapy.Item)</span>:</span></div><div class="line">    card_no = scrapy.Field()</div><div class="line">    card_amt = scrapy.Field()</div><div class="line">    last_use_time = scrapy.Field()</div><div class="line">    <span class="keyword">pass</span></div></pre></td></tr></table></figure>
-<p class="div-border-left-green">Item类似于java中的Bean。在Spider抓取网页信息后，将有效信息存放在其中；在Pipline里面，再将装备好的item持久化到数据库中。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/08/10/Python Spider 数据存储mysql/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>

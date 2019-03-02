@@ -1,0 +1,650 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Netty" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="boss分配任务后，worker就进入NioEventLoop#run()方法区执行任务：注册及绑定监听。  注册worker的注册功能可以参考boss的注册，基本一样。 先回顾下boss在ServerBootstrap$ServerBootstrapAcceptor中分配任务： 1234567...// childGroup就是worker// child就是由worker创建的NioSock">
+<meta name="keywords" content="Netty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty笔记04_worker注册">
+<meta property="og:url" content="http://yoursite.com/2019/03/02/Netty笔记04_worker注册/index.html">
+<meta property="og:site_name" content="laiwenqiang">
+<meta property="og:description" content="boss分配任务后，worker就进入NioEventLoop#run()方法区执行任务：注册及绑定监听。  注册worker的注册功能可以参考boss的注册，基本一样。 先回顾下boss在ServerBootstrap$ServerBootstrapAcceptor中分配任务： 1234567...// childGroup就是worker// child就是由worker创建的NioSock">
+<meta property="og:updated_time" content="2019-03-02T07:36:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Netty笔记04_worker注册">
+<meta name="twitter:description" content="boss分配任务后，worker就进入NioEventLoop#run()方法区执行任务：注册及绑定监听。  注册worker的注册功能可以参考boss的注册，基本一样。 先回顾下boss在ServerBootstrap$ServerBootstrapAcceptor中分配任务： 1234567...// childGroup就是worker// child就是由worker创建的NioSock">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"remove","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/02/Netty笔记04_worker注册/"/>
+
+
+
+
+
+  <title>Netty笔记04_worker注册 | laiwenqiang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">laiwenqiang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-plan">
+          <a href="/plan/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            计划
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/02/Netty笔记04_worker注册/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Netty笔记04_worker注册</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-02T15:36:19+08:00">
+                2019-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>boss分配任务后，worker就进入<code>NioEventLoop#run()</code>方法区执行任务：注册及绑定监听。</p>
+</blockquote>
+<h1 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h1><p>worker的注册功能可以参考boss的注册，基本一样。</p>
+<p>先回顾下boss在ServerBootstrap$ServerBootstrapAcceptor中分配任务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"><span class="comment">// childGroup就是worker</span></div><div class="line"><span class="comment">// child就是由worker创建的NioSocketChannel对象</span></div><div class="line"><span class="comment">// worker开始注册</span></div><div class="line">childGroup.register(child).addListener(<span class="keyword">new</span> ChannelFutureListener()) &#123;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>剩下的，最终就是会调用AbstractChannel$AbstractUnsafe#resigert0() -&gt; AbstractNioChannel#doRegister()，如此即完成注册。</p>
+<a id="more"></a>
+<h1 id="绑定OP-READ"><a href="#绑定OP-READ" class="headerlink" title="绑定OP_READ"></a>绑定OP_READ</h1><p>入口其实就是AbstractChannel$AbstractUnsafe#register()方法。不过对比worker的绑定OP_ACCEPT，worker的绑定也是极为类似。</p>
+<h2 id="AbstractChannel-AbstractUnsafe"><a href="#AbstractChannel-AbstractUnsafe" class="headerlink" title="AbstractChannel$AbstractUnsafe"></a>AbstractChannel$AbstractUnsafe</h2><h3 id="register0-方法"><a href="#register0-方法" class="headerlink" title="register0()方法"></a>register0()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">register0</span><span class="params">(ChannelPromise promise)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        ...</div><div class="line">        <span class="keyword">if</span> (isActive()) &#123;	<span class="comment">// boos为false，worker为true</span></div><div class="line">            <span class="keyword">if</span> (firstRegistration) &#123;</div><div class="line">                pipeline.fireChannelActive();	<span class="comment">// worker进入这里，进行绑定OP_ACCEPT</span></div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (config().isAutoRead()) &#123;                </div><div class="line">                beginRead();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">        closeForcibly();</div><div class="line">        closeFuture.setClosed();</div><div class="line">        safeSetFailure(promise, t);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><span class="inline-red">注意</span></p>
+<p>对于boss和worker的注册，都是会调用register0()进行注册。不过他们的绑定监听在不同：</p>
+<p>boss是通过<code>bind()</code>方法作为入口，调用<code>AbstractChannel$AbstractUnsafe#bind()</code>里的<code>pipeline.fireChannelActive()</code>来绑定<code>OP_ACCEPT</code>的。</p>
+<p>而worker则直接通过<code>register0()</code>里的<code>pipeline.fireChannelActive()</code>来绑定<code>OP_READ</code>。</p>
+<h2 id="AbstractNioChannel"><a href="#AbstractNioChannel" class="headerlink" title="AbstractNioChannel"></a>AbstractNioChannel</h2><p>从pipeline.fireChannelAcvie();往后的过程和boss是一样的，这里略过。</p>
+<h3 id="doBeginRead-方法"><a href="#doBeginRead-方法" class="headerlink" title="doBeginRead()方法"></a>doBeginRead()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doBeginRead</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    <span class="comment">// Channel.read() or ChannelHandlerContext.read() was called</span></div><div class="line">    <span class="keyword">final</span> SelectionKey selectionKey = <span class="keyword">this</span>.selectionKey;</div><div class="line">    <span class="keyword">if</span> (!selectionKey.isValid()) &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    readPending = <span class="keyword">true</span>;</div><div class="line"></div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> interestOps = selectionKey.interestOps();	<span class="comment">// 此时是0</span></div><div class="line">    <span class="keyword">if</span> ((interestOps &amp; readInterestOp) == <span class="number">0</span>) &#123;	<span class="comment">// readInterestOp为1</span></div><div class="line">        selectionKey.interestOps(interestOps | readInterestOp);	<span class="comment">// 绑定OP_READ</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>和boss一样，只是这里的readInterestOp为1。</p>
+<p><span class="inline-green">关于readInterestOp</span></p>
+<p>这个就是<code>OP_READ</code>，在AbstractNioByteChannel的构造函数中设置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="title">AbstractNioByteChannel</span><span class="params">(Channel parent, SelectableChannel ch)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>(parent, ch, SelectionKey.OP_READ);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上，worker已经成功启动，并且开始监听请求。</p>
+<h1 id="监听OP-READ请求"><a href="#监听OP-READ请求" class="headerlink" title="监听OP_READ请求"></a>监听OP_READ请求</h1><p>worker在执行完注册、绑定一系列任务后，再次循环进入<code>NioEventLoop#run()</code>方法。</p>
+<p>接下来，可以参考boss的监听请求，大同小异。无非是select()和processSelectedKey()这几个方法。</p>
+<p>此时，worker发现刚刚的那个请求，并且为READ。</p>
+<h1 id="解析请求以及触发Handler"><a href="#解析请求以及触发Handler" class="headerlink" title="解析请求以及触发Handler"></a>解析请求以及触发Handler</h1><p>这里就是进入unsafe的read()方法，解析解析请求组装成ByteBuf，然后调用pipeline.fireChannelRead(byteBuf)等方法，触发存放在pipeline中的所有用户自定义的Handler。</p>
+<h2 id="AbstractNioByteChannel-NioByteUnsafe"><a href="#AbstractNioByteChannel-NioByteUnsafe" class="headerlink" title="AbstractNioByteChannel$NioByteUnsafe"></a>AbstractNioByteChannel$NioByteUnsafe</h2><h3 id="read-方法"><a href="#read-方法" class="headerlink" title="read()方法"></a>read()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> ChannelConfig config = config();</div><div class="line">        <span class="keyword">if</span> (shouldBreakReadReady(config)) &#123;</div><div class="line">            clearReadPending();</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">final</span> ChannelPipeline pipeline = pipeline();</div><div class="line">        <span class="keyword">final</span> ByteBufAllocator allocator = config.getAllocator();</div><div class="line">        <span class="keyword">final</span> RecvByteBufAllocator.Handle allocHandle = recvBufAllocHandle();</div><div class="line">        allocHandle.reset(config);</div><div class="line"></div><div class="line">        ByteBuf byteBuf = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">boolean</span> close = <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">do</span> &#123;</div><div class="line">                byteBuf = allocHandle.allocate(allocator);</div><div class="line">                <span class="comment">// doReadBytes()方法，用于读取byteBuf。调用该方法后，byteBuf以及被赋值</span></div><div class="line">                allocHandle.lastBytesRead(doReadBytes(byteBuf));</div><div class="line">                <span class="keyword">if</span> (allocHandle.lastBytesRead() &lt;= <span class="number">0</span>) &#123;</div><div class="line">                    byteBuf.release();</div><div class="line">                    byteBuf = <span class="keyword">null</span>;</div><div class="line">                    close = allocHandle.lastBytesRead() &lt; <span class="number">0</span>;</div><div class="line">                    <span class="keyword">if</span> (close) &#123;</div><div class="line">                        readPending = <span class="keyword">false</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                allocHandle.incMessagesRead(<span class="number">1</span>);</div><div class="line">                readPending = <span class="keyword">false</span>;</div><div class="line">                pipeline.fireChannelRead(byteBuf);	<span class="comment">// 触发pipeline中的Handler</span></div><div class="line">                byteBuf = <span class="keyword">null</span>;</div><div class="line">            &#125; <span class="keyword">while</span> (allocHandle.continueReading());</div><div class="line"></div><div class="line">            allocHandle.readComplete();</div><div class="line">            pipeline.fireChannelReadComplete();</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (close) &#123;</div><div class="line">                closeOnRead(pipeline);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">            handleReadException(pipeline, byteBuf, t, close, allocHandle);</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;            </div><div class="line">            <span class="keyword">if</span> (!readPending &amp;&amp; !config.isAutoRead()) &#123;</div><div class="line">                removeReadOp();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以下没有指明类名的方法，均是属于<code>NioEventLoop</code>。</p>
+<p><strong>先复习一下上一章节的内容：boss监听ACCEPT请求以及分配任务：</strong></p>
+<p>1）boss进入<code>select()</code>，监听ACCEPT，发现有请求连接，此时selectedKeys被修改。</p>
+<p>2）boss进入<code>processSelectedKeys()</code>，发现selectedKeys被修改，并且值readOps()的值为ACCEPT。</p>
+<p>3）boss进入<font color="red">AbstractNioMessageChannel$NioMessageUnsafe#read()</font>方法，创建一个新的NioSocketChannel。</p>
+<p>4）boss进入<font color="red">DefaultChannelPipeline#fireChannelRead()</font>方法，该pipeline对$ServerBootstrapAcceptor -&gt; tail。</p>
+<p>5）boss进入<font color="red">ServerBootstrapAcceptor#channelRead()</font>，这个acceptor就是真正分配任务的地方，过程这样分为两步：</p>
+<p>5.1）得到第3）步中创建的NioSocketChannel，并且调用<font color="red">NioSocketChannel.pipeline().addLast(childHandler)</font>，添加childHandler。这里的childHandler，就是在boss和worker初始化时，调用ServerBootstap..childHandler(…)添加进来的。</p>
+<p>5.2）从childGroup在选出一个worker，调用<font color="red">AbstractChannel$AbstractUnsafe#register()</font>方法，向worker添加注册任务。至此，boss的监听及分配任务的工作完成。</p>
+<p><strong>现在开始worker注册，绑定OP_READ，以及其他。</strong></p>
+<p>6）worker接收到register任务后，进入<code>runAllTasks()</code>，执行注册。注册主要包括三个部分：</p>
+<p>6.1）将worker的selector注册到channel中。</p>
+<p>6.2）调用<font color="red">DefaultChannelPipeline.invokeHandlerAddedifNeeded()</font>，执行5.1）步中的childHandler，往pipeline中添加用户自定义的ChannelHandler对象。执行完后，pipeline对象中的handlerContext链表内容变为：head -&gt; 自定义01 -&gt; 自定义02 -&gt; … -&gt; tail。</p>
+<p>6.3）以及调用DefaultChannelPipeline.fireChannelActive()后，绑定READ。</p>
+<p><strong>worker监听READ请求</strong></p>
+<p>7）worker再次进入run()方法循环，进入<code>Select()</code>，监听READ，发现刚刚自己注册的请求，此时selectedKeys被修改。</p>
+<p>8）worker进入<code>processSelectedKeys()</code>，发现selectedKeys被修改，并且readOops()的值为READ。</p>
+<p><strong>worker执行Handler：处理业务逻辑</strong></p>
+<p>9）worker进入<font color="red">AbstractNioByteChannel$NioByteUnsafe#read()</font>方法，主要内容：</p>
+<p>9.1）解析ByteBuf。</p>
+<p>9.2）worker调用DefaultChannelPipeline.fireChannelRead()，触发6.3）步中的channelHandler相关方法。</p>
+<p>9.3）worker调用DefaultChannelPipeline.fireChannelReadComplete()，将pipeline中的handlerContext清空，只保留：head -&gt; tail。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Netty源码/" rel="tag"><i class="fa fa-tag"></i> Netty源码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/28/Netty笔记03_boss监听请求和分配任务/" rel="next" title="Netty笔记03_boss监听请求和分配任务">
+                <i class="fa fa-chevron-left"></i> Netty笔记03_boss监听请求和分配任务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">laiwenqiang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
