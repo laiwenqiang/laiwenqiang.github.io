@@ -409,8 +409,7 @@
 <p><span class="inline-green">关于pipeline#fireChannelRead()</span></p>
 <p>最终调用context里的方法：</p>
 <p>pipeline.fireChannelRead(Obj) -&gt; AbstractChannelHandlerContext#invokeChannelRead(head, obj)</p>
-<p>##调用DefaultChannelPipeline触发Handler</p>
-<p>光晕pipeline的内容太冗长，为了内容紧凑，这里只做概述。</p>
+<h2 id="调用DefaultChannelPipeline触发Handler"><a href="#调用DefaultChannelPipeline触发Handler" class="headerlink" title="调用DefaultChannelPipeline触发Handler"></a>调用DefaultChannelPipeline触发Handler</h2><p>关于pipeline的内容太冗长，为了内容紧凑，这里只做概述。</p>
 <p>boss分配任务前，调用pipeline#fireChannelRead()方法，从而找到head，然后开始遍历链表，找到<code>ServerBootstrap#ServerBootstrapAcceptor</code>实例对应的ChannelHandlerContext，并且执行。这个Acceptor就是用于分配任务的。</p>
 <p><span class="inline-green">Acceptor在什么时候被添加进pipeline中？</span></p>
 <p>在boss绑定注册时，调用AbstractBootstrap#doBind() -&gt; ServerBootstrap#init ()，这样来完成的。</p>
