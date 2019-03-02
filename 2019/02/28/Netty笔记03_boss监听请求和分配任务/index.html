@@ -93,17 +93,19 @@
 
 
 
-<meta name="description" content="经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。  类图在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。 EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。 一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个E">
+<meta name="description" content="经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。  类图 在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。 EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。 一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个">
 <meta name="keywords" content="Netty">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty笔记03_boss监听请求和分配任务">
 <meta property="og:url" content="http://yoursite.com/2019/02/28/Netty笔记03_boss监听请求和分配任务/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。  类图在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。 EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。 一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个E">
+<meta property="og:description" content="经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。  类图 在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。 EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。 一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个">
+<meta property="og:image" content="http://yoursite.com/2019/02/28/Netty笔记03_boss监听请求和分配任务/NioServerSocketChannel.svg">
 <meta property="og:updated_time" content="2019-02-28T12:29:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty笔记03_boss监听请求和分配任务">
-<meta name="twitter:description" content="经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。  类图在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。 EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。 一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个E">
+<meta name="twitter:description" content="经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。  类图 在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。 EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。 一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/28/Netty笔记03_boss监听请求和分配任务/NioServerSocketChannel.svg">
 
 
 
@@ -353,7 +355,8 @@
         <blockquote>
 <p>经过前面两章，boss已经启动及处理监听工作之中，那么本章分析监听及分配任务的细节。</p>
 </blockquote>
-<h1 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h1><p>在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。</p>
+<h1 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h1><p><img src="/2019/02/28/Netty笔记03_boss监听请求和分配任务/NioServerSocketChannel.svg" alt=""></p>
+<p>在绑定注册时，Channel会关联一个NioEventLoop，这个EventLoop就是属于boss的，用于监听请求。</p>
 <p>EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。</p>
 <p>一旦一个Channel被分配给一个EventLoop，它将在它的整个生命周期找那个都使用这个EventLoop。</p>
 <a id="more"></a>
