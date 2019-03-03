@@ -286,6 +286,154 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/26/Netty笔记01_boss和worker创初始化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/26/Netty笔记01_boss和worker创初始化/" itemprop="url">Netty笔记01_boss和worker创初始化</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-26T00:06:11+08:00">
+                2018-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>boss和worker的初始化，其实就是EventLoopGroup的初始化过程。</p>
+</blockquote>
+<h1 id="boss-和-worker"><a href="#boss-和-worker" class="headerlink" title="boss 和 worker"></a>boss 和 worker</h1><p>当Netty服务端启动，就会创建boss和worker，他们都是EventLoopGroup，只是负责的事情不同。</p>
+<p>执行任务的时候都是调用EventLoopGroup中的EventLoop去执行。</p>
+<p><font color="red">boss</font>通常只需要一个EventLoop即可，用于处理客户端的连接请求。当有请求时，创建一个Channel，并且从EventLoopGroup(worker)中获取一个EventLoop，调用EventLoop的register方法，将Channel交给它处理。</p>
+<p><font color="red">worker</font>包括多个EventLoop，用于处理Channel上所有的读写事件。一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel。</p>
+<p>当然，有时候boss和worker可以是同一个。</p>
+<p>boss和worker都会调用regiter方法，只是boss注册的是<code>Selectionkey.OP_ACCEPT</code>，而worker是<code>Selectionkey.OP_READ</code>。</p>
+<h1 id="EventLoopGroup类图"><a href="#EventLoopGroup类图" class="headerlink" title="EventLoopGroup类图"></a>EventLoopGroup类图</h1><p><img src="/2018/12/26/Netty笔记01_boss和worker创初始化/EventLoopGroup.svg" alt=""></p>
+<p>一个EventLoopGroup包括一个或者多个EventLoop。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/12/26/Netty笔记01_boss和worker创初始化/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/12/Python Spider 解析验证码/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -758,140 +906,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/Python Spider 获取网页内容/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/01/Python Spider 获取网页内容/" itemprop="url">Python Spider 获取网页内容</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T22:37:15+08:00">
-                2018-08-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>Intellij IDEA下搭建scrapy项目，并且简单获取网页内容。</p>
-</blockquote>
-<ol>
-<li><p>创建scrapy项目，项目名称：SZT_Spider。</p>
-<p><code>scrapy startproject SZT_Spider</code></p>
-</li>
-<li><p>进入项目。</p>
-<p><code>cd SZT_Spider</code></p>
-</li>
-<li><p>创建一个爬虫。</p>
-<p><code>scrapy genspider TicketInfoSpider shenzhentong.com</code></p>
-<p>爬虫名称：TicketInfoSpider</p>
-<p>爬取的网站域名：shenzhentong.com</p></li></ol>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/08/01/Python Spider 获取网页内容/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
