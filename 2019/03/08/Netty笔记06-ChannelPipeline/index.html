@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="作为一个非常重要的组件，所有的出站&amp;amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。  类图">
+<meta name="description" content="作为一个非常重要的组件，所有的出站&amp;amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。  类图ChannelPipeline主要接口 ChannelPipeline addFirst(String name, ChannelHandler handler)  ChannelPipeline addLast(String name, Channe">
 <meta name="keywords" content="Netty源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty笔记06_ChannelPipeline">
 <meta property="og:url" content="http://yoursite.com/2019/03/08/Netty笔记06-ChannelPipeline/index.html">
 <meta property="og:site_name" content="laiwenqiang">
-<meta property="og:description" content="作为一个非常重要的组件，所有的出站&amp;amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。  类图">
+<meta property="og:description" content="作为一个非常重要的组件，所有的出站&amp;amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。  类图ChannelPipeline主要接口 ChannelPipeline addFirst(String name, ChannelHandler handler)  ChannelPipeline addLast(String name, Channe">
 <meta property="og:updated_time" content="2019-03-08T13:49:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty笔记06_ChannelPipeline">
-<meta name="twitter:description" content="作为一个非常重要的组件，所有的出站&amp;amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。  类图">
+<meta name="twitter:description" content="作为一个非常重要的组件，所有的出站&amp;amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。  类图ChannelPipeline主要接口 ChannelPipeline addFirst(String name, ChannelHandler handler)  ChannelPipeline addLast(String name, Channe">
 
 
 
@@ -375,7 +375,24 @@
         <blockquote>
 <p>作为一个非常重要的组件，所有的出站&amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。</p>
 </blockquote>
-<h1 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h1>
+<h1 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h1><h1 id="ChannelPipeline主要接口"><a href="#ChannelPipeline主要接口" class="headerlink" title="ChannelPipeline主要接口"></a>ChannelPipeline主要接口</h1><ul>
+<li><p>ChannelPipeline addFirst(String name, ChannelHandler handler)</p>
+</li>
+<li><p>ChannelPipeline addLast(String name, ChannelHandler handler)</p>
+</li>
+<li><p>ChannelPipeline remove(ChannelHandler handler)</p>
+</li>
+<li><p>ChannelPipeline fireChannelRegistered()</p>
+</li>
+<li><p>ChannelPipeline fireChannelActive()</p>
+</li>
+<li><p>ChannelPipeline fireChannelRead(Object msg)</p>
+<p>其他都是类似，主要都是增删改查这些操作，和fireXXX()这些。</p>
+</li>
+</ul>
+<h1 id="简单列子解析"><a href="#简单列子解析" class="headerlink" title="简单列子解析"></a>简单列子解析</h1><p>正常情况下都是需要在NioEventLoopGroup中使用的，这样分析起来就显得复杂了。这里为了简单起见，采用一种简单的使用例子。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>Test类</p>
+
       
     </div>
 
