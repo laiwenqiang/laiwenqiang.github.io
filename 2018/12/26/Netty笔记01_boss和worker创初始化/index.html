@@ -102,7 +102,7 @@
 <meta property="og:description" content="boss和worker的初始化，其实就是EventLoopGroup的初始化过程。  boss 和 worker当Netty服务端启动，就会创建boss和worker，他们都是EventLoopGroup，只是负责的事情不同。 执行任务的时候都是调用EventLoopGroup中的EventLoop去执行。 boss通常只需要一个EventLoopGroup即可，用于处理客户端的连接请求。当有请">
 <meta property="og:image" content="http://yoursite.com/2018/12/26/Netty笔记01_boss和worker创初始化/EventLoopGroup.svg">
 <meta property="og:image" content="http://yoursite.com/2018/12/26/Netty笔记01_boss和worker创初始化/ServerBootstrap.svg">
-<meta property="og:updated_time" content="2019-03-25T14:42:15.210Z">
+<meta property="og:updated_time" content="2019-03-25T15:08:08.443Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty笔记01_boss和worker创初始化">
 <meta name="twitter:description" content="boss和worker的初始化，其实就是EventLoopGroup的初始化过程。  boss 和 worker当Netty服务端启动，就会创建boss和worker，他们都是EventLoopGroup，只是负责的事情不同。 执行任务的时候都是调用EventLoopGroup中的EventLoop去执行。 boss通常只需要一个EventLoopGroup即可，用于处理客户端的连接请求。当有请">
@@ -383,7 +383,7 @@
 <p><font color="red">boss</font>通常只需要一个EventLoopGroup即可，用于处理客户端的连接请求。当有请求时，创建一个Channel，并且从EventLoopGroup(worker)中获取一个EventLoop，调用EventLoop的register方法，将Channel交给它处理。</p>
 <p><font color="red">worker</font>包括多个EventLoopGroup，用于处理Channel上所有的读写事件。一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel。</p>
 <p>当然，有时候boss和worker可以是同一个。</p>
-<p>boss和worker都会调用regiter方法，只是boss注册的是<code>Selectionkey.OP_ACCEPT</code>，而worker是<code>Selectionkey.OP_READ</code>。</p>
+<p>boss和worker都会调用regiter方法，只是boss注册的是<code>Selectionkey.OP_ACCEPT</code>，而worker是<code>Selectionkey.OP_READ</code>。 </p>
 <h1 id="EventLoopGroup类图"><a href="#EventLoopGroup类图" class="headerlink" title="EventLoopGroup类图"></a>EventLoopGroup类图</h1><p><img src="/2018/12/26/Netty笔记01_boss和worker创初始化/EventLoopGroup.svg" alt=""></p>
 <p>一个EventLoopGroup包括一个或者多个EventLoop。</p>
 <a id="more"></a>
