@@ -286,6 +286,174 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/" itemprop="url">《How Tomcat Works》 笔记04 一Tomcat的默认连接器</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T17:16:45+08:00">
+                2017-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index">
+                    <span itemprop="name">tomcat</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>这本书(How Tomcat Works <a href="https://github.com/laiwenqiang/HowTomcatWorks/blob/master/doc/how%20tomcat%20works中文版.pdf" target="_blank" rel="external">中文下载地址</a>)之前就看过，然而也就开了个头就废弃了，所以一直耿耿于怀。这次决定重新开始，在此记录一些学习心得和本书的主要知识点。<br>所有代码也将托管在<a href="https://github.com/laiwenqiang/HowTomcatWorks" target="_blank" rel="external">GitHub</a>上面。O(∩_∩)O</p>
+</blockquote>
+<h1 id="上节回顾"><a href="#上节回顾" class="headerlink" title="上节回顾"></a>上节回顾</h1><p>我们创建了一个connector连接器。</p>
+<ol>
+<li>将之前的程序更加模块化，</li>
+<li>同时解析了HTTP请求，将这些信息封装到<code>HttpRequest</code>，这样Servlet就能够获取到这些信息了。</li>
+</ol>
+<p>上一章节的主要工作在于解析HTTP请求上。</p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>主要剖析tomcat的 <code>HttpConnector</code> 和 <code>HttpProcessor</code> 的源代码。</p>
+<h1 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h1><p>一个 Tomcat 连接器必须符合以下条件:</p>
+<ol>
+<li>必须实现接口<code>org.apache.catalina.Connector</code>。</li>
+<li>必须创建请求对象，该请求对象的类必须实现接口<code>org.apache.catalina.Request</code>。</li>
+<li>必须创建响应对象，该响应对象的类必须实现接口 <code>org.apache.catalina.Response</code>。</li>
+</ol>
+<h2 id="Connector接口"><a href="#Connector接口" class="headerlink" title="Connector接口"></a>Connector接口</h2><p>指的是<code>org.apache.catalina.Connector</code>，在这个接口里，最重要的方法是，</p>
+<ol>
+<li><code>getContainer</code> 返回一个容器。</li>
+<li><code>setContainer</code> 设置一个容器。</li>
+<li><code>createRequest</code> 为前来的 HTTP 请求构造一个请求对象。</li>
+<li><code>createResponse</code> 创建一个响应对象。</li>
+</ol>
+<p>Connector有很多实现，<code>org.apache.catalina.connector.http.HttpConnector</code>是其中一个。</p>
+<h2 id="HttpConnector类"><a href="#HttpConnector类" class="headerlink" title="HttpConnector类"></a>HttpConnector类</h2><p>这个类实现的接口有，Connector、Runnable和Lifecycle。<br><code>org.apache.catalina.Lifecycle</code>用于维护生命周期。</p>
+<p><strong>在前几章节，我们也实现了自己的HttpConnector类，现在来看一下它和Tomcat的有何不同。</strong></p>
+<ol>
+<li>创建ServerSocket方式不同；</li>
+<li>维护HttpProcessor对象池；</li>
+<li>处理HTTP不同。</li>
+</ol>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/24/HowTomcatWorks学习笔记04--Tomcat的默认连接器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/24/HowTomcatWorks学习笔记05--Tomcat的默认连接器（续）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
