@@ -286,6 +286,148 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/02/Netty笔记-Recycler浅析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="laiwenqiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laiwenqiang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/02/Netty笔记-Recycler浅析/" itemprop="url">Netty笔记_Recycler浅析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-02T22:03:04+08:00">
+                2019-04-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>Recycler用于Pooled中Buf的创建以及回收。</p>
+</blockquote>
+<p>所有的线程都是通过<code>Recycler</code>进行创建和回收PooledByteBuf，Buf被封装在<code>DefaultHandle</code>中。</p>
+<p>线程通过PooledByteBufAllocator创建Buf，先从一个ThreadLocal类型的cache中取出PoolArena，然后通过Recycler进行创建。创建时会先尝试从stack（也是ThreadLocal类型）中获取已经被回收的buf，如果没有就新建一个。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/04/02/Netty笔记-Recycler浅析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/29/Idea快捷键/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -487,64 +629,17 @@
 
       
         
-          
-            <blockquote>
+          <blockquote>
 <p>作为一个非常重要的组件，所有的出站&amp;入站事件的ChannelHandler组成的实例链，都会被ChannelPipeline拦截。</p>
 </blockquote>
-<h1 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h1><h1 id="ChannelPipeline主要接口"><a href="#ChannelPipeline主要接口" class="headerlink" title="ChannelPipeline主要接口"></a>ChannelPipeline主要接口</h1><ul>
-<li><p>ChannelPipeline addFirst(String name, ChannelHandler handler)</p>
-</li>
-<li><p>ChannelPipeline addLast(String name, ChannelHandler handler)</p>
-</li>
-<li><p>ChannelPipeline remove(ChannelHandler handler)</p>
-</li>
-<li><p>ChannelPipeline fireChannelRegistered()</p>
-</li>
-<li><p>ChannelPipeline fireChannelActive()</p>
-</li>
-<li><p>ChannelPipeline fireChannelRead(Object msg)</p>
-<p>其他都是类似，主要都是增删改查这些操作，和fireXXX()这些。</p>
-</li>
-</ul>
-<h1 id="简单列子解析"><a href="#简单列子解析" class="headerlink" title="简单列子解析"></a>简单列子解析</h1><p>正常情况下都是需要在NioEventLoopGroup中使用的，这样分析起来就显得复杂了。这里为了简单起见，采用一种简单的使用例子。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="Test类"><a href="#Test类" class="headerlink" title="Test类"></a>Test类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultChannelPipelineTest</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Channel channel = <span class="keyword">new</span> EmbeddedChannel();</div><div class="line">        channel.pipeline().addLast(<span class="keyword">new</span> Handler(), <span class="keyword">new</span> Handler());</div><div class="line"></div><div class="line">        System.out.println(channel.pipeline());</div><div class="line">        System.out.println(<span class="string">"---- before fireChannelRegistered ---"</span>);</div><div class="line"></div><div class="line">        channel.pipeline().fireChannelRegistered();</div><div class="line"></div><div class="line">        System.out.println(<span class="string">"---- before fireChannelRead ----"</span>);</div><div class="line">        channel.pipeline().fireChannelRead(<span class="string">"Hello"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Handler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInboundHandler</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">channelRead0</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        System.out.println(ctx.name() + <span class="string">":"</span> + msg);</div><div class="line">        ctx.fireChannelRead(<span class="string">"World"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        System.out.println(ctx.name() + <span class="string">": exceptionCaught."</span> + cause);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里只创建Channel，而EmbeddedChannelPipeline(继承于DefaultChannelPipeline)会在其构造方法在完成创建。如此，本章探讨的pipeline就可以正常工作了。</p>
-<p><span class="inline-green">注：为何不用喜闻乐见的NioServerSocketChannel？</span></p>
-<p>虽然说如此是可以进行创建DefaultChannelPipeline，从而进行本章节的样式。但是，NioServerSocketChannel的创建起来稍微麻烦了，并且还需要再手动注册进一个NioEventLoop，而由于Netty本身的封装原因，导致创建EventLoop又麻烦。如此就显得主次不分了，为了代码的简介和功能的紧凑，我们就采用现在的EmbeddedChannel$EmbeddedChannelPipeline。</p>
-<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">EmbeddedChannel$EmbeddedChannelPipeline&#123;(Handler#0 = test.Handler), (Handler#1 = test.Handler)&#125;</div><div class="line">---- before fireChannelRegistered ---</div><div class="line">---- before fireChannelRead ----</div><div class="line">Handler#0:Hello</div><div class="line">Handler#1:World</div></pre></td></tr></table></figure>
-<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>Handler通过addLast/addFirst()等方法添加进pipeline，Handler会被封装成DefaultChannelHandlerContext。这个Context是个链表，有两个指针，分别指向上一个和下一个DefaultChannelHandlerContext，由此将pipeline里的所有Handler串联起来。</p>
-<p>调用fireChannelRead()方法的时候，将会按照顺序调用Handler#channelRead0()方法。<code>ctx.fireChannelRead(&quot;world&quot;);</code>将“World“传递给下一个Handler。</p>
-<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><h2 id="构造函数，创建head和tail"><a href="#构造函数，创建head和tail" class="headerlink" title="构造函数，创建head和tail"></a>构造函数，创建head和tail</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="title">DefaultChannelPipeline</span><span class="params">(Channel channel)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.channel = ObjectUtil.checkNotNull(channel, <span class="string">"channel"</span>);</div><div class="line">    succeededFuture = <span class="keyword">new</span> SucceededChannelFuture(channel, <span class="keyword">null</span>);</div><div class="line">    voidPromise =  <span class="keyword">new</span> VoidChannelPromise(channel, <span class="keyword">true</span>);</div><div class="line"></div><div class="line">    tail = <span class="keyword">new</span> TailContext(<span class="keyword">this</span>);</div><div class="line">    head = <span class="keyword">new</span> HeadContext(<span class="keyword">this</span>);</div><div class="line"></div><div class="line">    head.next = tail;</div><div class="line">    tail.prev = head;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Pipeline是包含着一系列Handler的容器，每一个Handler对应着一个HandlerContext，而HandlerContext是一个双向的列表。在构造函数中，创建一个两个HandlerContext，分别是tail和head。</p>
-<h2 id="添加Handler"><a href="#添加Handler" class="headerlink" title="添加Handler"></a>添加Handler</h2><h3 id="addLast-方法"><a href="#addLast-方法" class="headerlink" title="addLast()方法"></a>addLast()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> ChannelPipeline <span class="title">addLast</span><span class="params">(EventExecutorGroup group, String name, ChannelHandler handler)</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> AbstractChannelHandlerContext newCtx;</div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">        checkMultiplicity(handler);	<span class="comment">// 校验</span></div><div class="line"></div><div class="line">        newCtx = newContext(group, filterName(name, handler), handler);	<span class="comment">// 封装成DefaultChannelHandlerContext</span></div><div class="line"></div><div class="line">        addLast0(newCtx);	<span class="comment">// 添加链表的节点</span></div><div class="line">		<span class="comment">// 如果还没有注册完成，将在注册完成后调用callHandlerAdded0()方法</span></div><div class="line">        <span class="keyword">if</span> (!registered) &#123;</div><div class="line">            newCtx.setAddPending();</div><div class="line">            callHandlerCallbackLater(newCtx, <span class="keyword">true</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line">		<span class="comment">// 如果已经完成注册，直接调用callHandlerAdded0()方法</span></div><div class="line">        EventExecutor executor = newCtx.executor();</div><div class="line">        <span class="keyword">if</span> (!executor.inEventLoop()) &#123;</div><div class="line">            newCtx.setAddPending();</div><div class="line">            executor.execute(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">                <span class="meta">@Override</span></div><div class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                    callHandlerAdded0(newCtx);</div><div class="line">                &#125;</div><div class="line">            &#125;);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    callHandlerAdded0(newCtx);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="filterName-方法"><a href="#filterName-方法" class="headerlink" title="filterName()方法"></a>filterName()方法</h3><p>用于生成名字和检查名字是否重复。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">filterName</span><span class="params">(String name, ChannelHandler handler)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span> generateName(handler);</div><div class="line">    &#125;</div><div class="line">    checkDuplicateName(name);</div><div class="line">    <span class="keyword">return</span> name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="generateName-方法"><a href="#generateName-方法" class="headerlink" title="generateName()方法"></a>generateName()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">generateName</span><span class="params">(ChannelHandler handler)</span> </span>&#123;</div><div class="line">    <span class="comment">// 先从cache中查找，如果有则无需 生成；如果没有，则生成并且放入cache。</span></div><div class="line">    Map&lt;Class&lt;?&gt;, String&gt; cache = nameCaches.get();</div><div class="line">    Class&lt;?&gt; handlerType = handler.getClass();</div><div class="line">    String name = cache.get(handlerType);</div><div class="line">    <span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</div><div class="line">        name = generateName0(handlerType);	<span class="comment">// name的格式：handlerType的类名 + “#0“</span></div><div class="line">        cache.put(handlerType, name);</div><div class="line">    &#125;</div><div class="line">	<span class="comment">// 如果已经存在名字为“#0“结尾的context，就遍历context列表，用最后的context名字后缀加上1，作为这个行的handler的名字</span></div><div class="line">    <span class="keyword">if</span> (context0(name) != <span class="keyword">null</span>) &#123;</div><div class="line">        String baseName = name.substring(<span class="number">0</span>, name.length() - <span class="number">1</span>); <span class="comment">// Strip the trailing '0'.</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;; i ++) &#123;</div><div class="line">            String newName = baseName + i;</div><div class="line">            <span class="keyword">if</span> (context0(newName) == <span class="keyword">null</span>) &#123;</div><div class="line">                name = newName;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如前面的例子中：<code>channel.pipeline().addLast(new Handler(), new Handler());</code>，添加了两个Handler，第一个的名字是Handler#0，会存放在cache中；第二个handler被添加时，Handler#1就是它的名字，但是Handler#1不会存放在cache中。</p>
-<h3 id="addLast0-方法"><a href="#addLast0-方法" class="headerlink" title="addLast0()方法"></a>addLast0()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addLast0</span><span class="params">(AbstractChannelHandlerContext newCtx)</span> </span>&#123;</div><div class="line">    AbstractChannelHandlerContext prev = tail.prev;</div><div class="line">    newCtx.prev = prev;</div><div class="line">    newCtx.next = tail;</div><div class="line">    prev.next = newCtx;</div><div class="line">    tail.prev = newCtx;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从tail尾部添加节点元素，就是简单的链表操作。</p>
-<h3 id="callHandlerCallbackLater-方法"><a href="#callHandlerCallbackLater-方法" class="headerlink" title="callHandlerCallbackLater()方法"></a>callHandlerCallbackLater()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callHandlerCallbackLater</span><span class="params">(AbstractChannelHandlerContext ctx, <span class="keyword">boolean</span> added)</span> </span>&#123;</div><div class="line">    <span class="keyword">assert</span> !registered;</div><div class="line"></div><div class="line">    PendingHandlerCallback task = added ? <span class="keyword">new</span> PendingHandlerAddedTask(ctx) : <span class="keyword">new</span> PendingHandlerRemovedTask(ctx);</div><div class="line">    PendingHandlerCallback pending = pendingHandlerCallbackHead;	<span class="comment">// 回调任务链表</span></div><div class="line">    <span class="comment">// 将task添加到链表的尾部</span></div><div class="line">    <span class="keyword">if</span> (pending == <span class="keyword">null</span>) &#123;</div><div class="line">        pendingHandlerCallbackHead = task;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">while</span> (pending.next != <span class="keyword">null</span>) &#123;</div><div class="line">            pending = pending.next;</div><div class="line">        &#125;</div><div class="line">        pending.next = task;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>PendingHandlerAddedTask里面包含了callHandlerAdded0()这个方法的引用。</p>
-<p>PendingHandlerCallback是一个单项的链表，在注册完成时会进行回调。</p>
-<p>在channelRegistered() -&gt; invokeHandlerAddedifNeeded() -&gt; callHandlerAddedForAllHandlers()将会调用pendingHandlerCallbackHead这个回调任务列表。</p>
-<h3 id="callHandlerAdded0-方法"><a href="#callHandlerAdded0-方法" class="headerlink" title="callHandlerAdded0()方法"></a>callHandlerAdded0()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callHandlerAdded0</span><span class="params">(<span class="keyword">final</span> AbstractChannelHandlerContext ctx)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        ctx.setAddComplete();</div><div class="line">        ctx.handler().handlerAdded(ctx);</div><div class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">       ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这个方法将会调用handler#handlerAdded()。由于我们自定义的Handler是继承于ChannelHandlerAdapter，而该类的这个方法是空的，所以由<code>channel.pipeline().addLast(new Handler(), new Handler());</code>所调用的这个方法并不会有什么效果。</p>
-<p>但是，由于ChannelInitializer是实现了这个方法，而且这个方法将会调用initChannel()，所以继承于此类的Handler将会调用这个实现方法用于初始化操作。在创建Net同样应用的时候，我们都通常会创建一个ChannelInitializer，比企鹅在此initChannel()中实现添加自定影Handler的操作。例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">ServerBootstrap bootstrap = <span class="keyword">new</span> ServerBootstrap();</div><div class="line">bootstrap.group(boss, worker)</div><div class="line">        .channel(NioServerSocketChannel.class)</div><div class="line">        .localAddress(<span class="keyword">new</span> InetSocketAddress(port))</div><div class="line">        .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;	<span class="comment">// 创建ChannelInitializer</span></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="comment">// 实现此方法</span></div><div class="line">            <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel socketChannel)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                socketChannel.pipeline() <span class="comment">// 添加业务Handler</span></div><div class="line">                        .addLast(<span class="keyword">new</span> EchoServerHandler())</div><div class="line">                        .addLast(<span class="keyword">new</span> RequestController());</div><div class="line">            &#125;</div><div class="line">        &#125;);</div></pre></td></tr></table></figure>
-<h2 id="触发事件"><a href="#触发事件" class="headerlink" title="触发事件"></a>触发事件</h2><h3 id="fireChannelRead-方法"><a href="#fireChannelRead-方法" class="headerlink" title="fireChannelRead()方法"></a>fireChannelRead()方法</h3><p>用于channel的数据读取处理</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> ChannelPipeline <span class="title">fireChannelRead</span><span class="params">(Object msg)</span> </span>&#123;</div><div class="line">    AbstractChannelHandlerContext.invokeChannelRead(head, msg);	<span class="comment">// 这里传入read</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>作为触发数据读取的入口，这里是从head开始的。</p>
-<h3 id="AbstractChannelHandlerContext-invokeChannelReade-方法"><a href="#AbstractChannelHandlerContext-invokeChannelReade-方法" class="headerlink" title="AbstractChannelHandlerContext#invokeChannelReade()方法"></a>AbstractChannelHandlerContext#invokeChannelReade()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">invokeChannelRead</span><span class="params">(<span class="keyword">final</span> AbstractChannelHandlerContext next, Object msg)</span> </span>&#123;</div><div class="line">    <span class="comment">// 这个touch的作用没有太明白。正常情况下返回msg。</span></div><div class="line">    <span class="keyword">final</span> Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, <span class="string">"msg"</span>), next);</div><div class="line">    EventExecutor executor = next.executor();</div><div class="line">    <span class="comment">// 调用HandlerContext的invokeChannelRead()方法</span></div><div class="line">    <span class="keyword">if</span> (executor.inEventLoop()) &#123;</div><div class="line">        next.invokeChannelRead(m);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        executor.execute(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                next.invokeChannelRead(m);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="AbstractChannelHandlerContext-invokeChannelRead-方法"><a href="#AbstractChannelHandlerContext-invokeChannelRead-方法" class="headerlink" title="AbstractChannelHandlerContext#invokeChannelRead()方法"></a>AbstractChannelHandlerContext#invokeChannelRead()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">invokeChannelRead</span><span class="params">(Object msg)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (invokeHandler()) &#123;	<span class="comment">// 是否调用invokeHandler()</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">// 调用handler#channelRead()</span></div><div class="line">            ((ChannelInboundHandler) handler()).channelRead(<span class="keyword">this</span>, msg);</div><div class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">            notifyHandlerException(t);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        fireChannelRead(msg);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="AbstractChannelHandlerContext-invokeChannelRead-方法-1"><a href="#AbstractChannelHandlerContext-invokeChannelRead-方法-1" class="headerlink" title="AbstractChannelHandlerContext#invokeChannelRead()方法"></a>AbstractChannelHandlerContext#invokeChannelRead()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> ChannelHandlerContext <span class="title">fireChannelRead</span><span class="params">(<span class="keyword">final</span> Object msg)</span> </span>&#123;</div><div class="line">    invokeChannelRead(findContextInbound(), msg);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这个方法，先从HandlerContext链表中找到下一个类型为ChannelInboundHandler的HandlerContext，然后再调用其invokeChannelRead()方法。</p>
-<h3 id="findContextInbound-方法"><a href="#findContextInbound-方法" class="headerlink" title="findContextInbound()方法"></a>findContextInbound()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> AbstractChannelHandlerContext <span class="title">findContextInbound</span><span class="params">()</span> </span>&#123;</div><div class="line">    AbstractChannelHandlerContext ctx = <span class="keyword">this</span>;</div><div class="line">    <span class="keyword">do</span> &#123;</div><div class="line">        ctx = ctx.next;</div><div class="line">    &#125; <span class="keyword">while</span> (!ctx.inbound);</div><div class="line">    <span class="keyword">return</span> ctx;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>找到下一个InboundHandlerContext。所有的HandlerContext都会根据这个方法来获取 下一个HandlerContext，由此将msg传送给下一个HandlerContext进行处理。</p>
-<h3 id="HeadContext-ChannelRead-方法"><a href="#HeadContext-ChannelRead-方法" class="headerlink" title="HeadContext#ChannelRead()方法"></a>HeadContext#ChannelRead()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    ctx.fireChannelRead(msg);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>Handler#ChannelRead()是需要重写的，添加我们自己的业务逻辑。而HeadContext的这个方法，仅仅是将msg传递给下一个ContextHandler，并没有做其他处理。</p>
-<p>对应之前的例子，我们用的是继承于SimpleChannelInboundHandler的Handler，然后腹泻的channelRead()方法，该方法是会被channelRead()调用，原理也是一样的，这里略过不表。</p>
-
-          
+<h1 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h1>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/03/08/Netty笔记06-ChannelPipeline/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -824,148 +919,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/03/03/模拟ByteBuffer实现/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/03/ByteBuffer解析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="laiwenqiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laiwenqiang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/03/ByteBuffer解析/" itemprop="url">ByteBuffer解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-03T16:07:27+08:00">
-                2019-03-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Nio/" itemprop="url" rel="index">
-                    <span itemprop="name">Nio</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>在Nio中ByteBuffer承载着处理数据的重要任务。本文主要分析其实现类：DirectByteBuffer和HeapByteBuffer。</p>
-</blockquote>
-<h1 id="关系图"><a href="#关系图" class="headerlink" title="关系图"></a>关系图</h1><p><img src="/2019/03/03/ByteBuffer解析/ByteBuffer.svg" alt=""></p>
-<p>这个类图不完整，省略了接口等，只留主要的枝干。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/03/03/ByteBuffer解析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
