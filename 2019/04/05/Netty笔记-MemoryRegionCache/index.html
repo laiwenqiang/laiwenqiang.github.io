@@ -100,10 +100,14 @@
 <meta property="og:url" content="http://yoursite.com/2019/04/05/Netty笔记-MemoryRegionCache/index.html">
 <meta property="og:site_name" content="laiwenqiang">
 <meta property="og:description" content="内存分配时，会先从缓存中取，如果没有再进行分配。这里的缓存就是本文的内容。  内存大小分类小于512B的称之为tiny，用SubPage管理；介于512B和8K之间的称之为small，用Page管理；介于8K和16M的叫做normal，用Chunk管理；再大的叫做huge，这个类型的内存不会进行缓存。">
+<meta property="og:image" content="http://yoursite.com/2019/04/05/Netty笔记-MemoryRegionCache/MemorySize.svg">
+<meta property="og:image" content="http://yoursite.com/2019/04/05/Netty笔记-MemoryRegionCache/MemoryRegionCache.svg">
+<meta property="og:image" content="http://yoursite.com/2019/04/05/Netty笔记-MemoryRegionCache/tinySubPageDirectCache.svg">
 <meta property="og:updated_time" content="2019-04-05T14:54:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Netty笔记_MemoryRegionCache">
 <meta name="twitter:description" content="内存分配时，会先从缓存中取，如果没有再进行分配。这里的缓存就是本文的内容。  内存大小分类小于512B的称之为tiny，用SubPage管理；介于512B和8K之间的称之为small，用Page管理；介于8K和16M的叫做normal，用Chunk管理；再大的叫做huge，这个类型的内存不会进行缓存。">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/05/Netty笔记-MemoryRegionCache/MemorySize.svg">
 
 
 
@@ -376,13 +380,28 @@
 <p>内存分配时，会先从缓存中取，如果没有再进行分配。这里的缓存就是本文的内容。</p>
 </blockquote>
 <h1 id="内存大小分类"><a href="#内存大小分类" class="headerlink" title="内存大小分类"></a>内存大小分类</h1><p>小于512B的称之为tiny，用SubPage管理；介于512B和8K之间的称之为small，用Page管理；介于8K和16M的叫做normal，用Chunk管理；再大的叫做huge，这个类型的内存不会进行缓存。</p>
+<p><img src="/2019/04/05/Netty笔记-MemoryRegionCache/MemorySize.svg" alt=""></p>
 <a id="more"></a>
 <h1 id="缓存类型"><a href="#缓存类型" class="headerlink" title="缓存类型"></a>缓存类型</h1><p>PoolThreadCache</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> MemoryRegionCache&lt;<span class="keyword">byte</span>[]&gt;[] tinySubPageHeapCaches;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> MemoryRegionCache&lt;<span class="keyword">byte</span>[]&gt;[] smallSubPageHeapCaches;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> MemoryRegionCache&lt;ByteBuffer&gt;[] tinySubPageDirectCaches;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> MemoryRegionCache&lt;ByteBuffer&gt;[] smallSubPageDirectCaches;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> MemoryRegionCache&lt;<span class="keyword">byte</span>[]&gt;[] normalHeapCaches;</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> MemoryRegionCache&lt;ByteBuffer&gt;[] normalDirectCaches;</div></pre></td></tr></table></figure>
 <p>对于不同的内存大小以及内存位置(heap/Direct)，分为以上6种缓存。每种类型的缓存都是用<code>MemoryRegionCache</code>数组储存，并且他们各自的数组长度也是不同的。</p>
+<p><img src="/2019/04/05/Netty笔记-MemoryRegionCache/MemoryRegionCache.svg" alt=""></p>
 <p>tiny类型的缓存数组长度为32，small为4，normal为3.并且，同一个数组里的每一个元素存放着的内存大小也是不同的。tiny的起始下标是1，从16B开始，每次增加16B，最大是496B。small从512B开始，每次增大一倍，最大是4K。normal从8K开始，每次也是增加一倍，最大32K。</p>
 <p>现在我们知道了，不同的内存大小类型将会对应不同的MemoryRegionCache数组，数组中的每一个元素又对应着各自不同的内存大小。例如，我们release一个32B的内存，那么会将其缓存在tiny[2]中。如果又release了多个32B时，也是同样的会存放在tiny[2]中。所以可以推出，该数组存放的应该是个队列或者列表这种数据结构。</p>
-
+<p><img src="/2019/04/05/Netty笔记-MemoryRegionCache/tinySubPageDirectCache.svg" alt=""></p>
+<p>有一点点像HashMap的样子，当然还是有很大的区别。其他类型的数组也是类似。</p>
+<p><code>MemoryRegionCache&lt;byte[]&gt;[] tinySubPageHeapCaches;</code>，MemoryRegionCache的 主要属性：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> size;	<span class="comment">// 存储的Queue的个数，也就是某个大小的内存可以缓存size个</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> Queue&lt;Entry&lt;T&gt;&gt; queue;	<span class="comment">// 缓存的数据在于此</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> SizeClass sizeClass;	<span class="comment">// tiny/small/normal</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">int</span> allocations;</div></pre></td></tr></table></figure>
+<h1 id="命中缓存的分配流程"><a href="#命中缓存的分配流程" class="headerlink" title="命中缓存的分配流程"></a>命中缓存的分配流程</h1><ol>
+<li>找到对应size的MemoryRegionCache</li>
+<li>从Queue中弹出一个Entry，用它的chunk和handle给ByteBuf进行初始化</li>
+<li>将弹出的Entry回收进对象池，进行复用</li>
+</ol>
+<p>以tiny缓存获取为例子，经过的主要方法链：PoolArena#allocate() -&gt; PoolThreadCache#allocateTiny() -&gt; PoolThreadCache#allocate() -&gt; MemoryRegionCache#allocate() -&gt; SubPageMemoryRegionCache#initBuf()</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><h3 id="PoolThreadCache-cacheForTiny"><a href="#PoolThreadCache-cacheForTiny" class="headerlink" title="PoolThreadCache#cacheForTiny()"></a>PoolThreadCache#cacheForTiny()</h3><p>从某个缓存数组中赵春某个具体的MemoryRegionCache实例。</p>
+<h3 id="PoolThreadCache-cache"><a href="#PoolThreadCache-cache" class="headerlink" title="PoolThreadCache#cache()"></a>PoolThreadCache#cache()</h3><p>如果找到了对应的MemoryRegionCache，则进行分配，否则返回。</p>
+<h3 id="MemoryRegionCache-allocate"><a href="#MemoryRegionCache-allocate" class="headerlink" title="MemoryRegionCache#allocate()"></a>MemoryRegionCache#allocate()</h3><p>初始化buf，并且将这个Entry回收进对象池。</p>
+<h3 id="SubPageMemoryRegionCache-initBuf"><a href="#SubPageMemoryRegionCache-initBuf" class="headerlink" title="SubPageMemoryRegionCache#initBuf()"></a>SubPageMemoryRegionCache#initBuf()</h3>
       
     </div>
 

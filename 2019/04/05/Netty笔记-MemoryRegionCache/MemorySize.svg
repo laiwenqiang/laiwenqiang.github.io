@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="599px" height="214px" viewBox="0 0 599 214" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>MemorySize</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="MemorySize" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Class" transform="translate(74.000000, 78.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="0" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="20.1630859" y="21">0</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(174.000000, 78.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="512B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="9.15625" y="21">512B</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(274.000000, 78.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="8K" opacity="0.800000012" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="15.8300781" y="21">8K</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(374.000000, 78.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="16M" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="11.828125" y="21">16M</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(121.000000, 0.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#F8E71C"></path>
+            <text id="tiny" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="12.8330078" y="21">tiny</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(221.000000, 0.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#F8E71C"></path>
+            <text id="small" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="8.15722656" y="21">small</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(321.000000, 0.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L47,34.5 C51.1421356,34.5 54.5,31.1421356 54.5,27 L54.5,8 C54.5,3.85786438 51.1421356,0.5 47,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#F8E71C"></path>
+            <text id="normal" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="7.49609375" y="21">normal</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(429.000000, 0.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#F8E71C"></path>
+            <text id="huge" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="9.16796875" y="21">huge</tspan>
+            </text>
+        </g>
+        <path id="Line-9" d="M599,112.5 L590,108 L590,117 L599,112.5 Z M0.5,113 L590.5,113 L591,113 L591,112 L590.5,112 L0.5,112 L1.11022302e-16,112 L1.11022302e-16,113 L0.5,113 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path d="M97.5,112.5 C118.925367,155.953567 135.258701,177.680351 146.5,177.680351 C157.741299,177.680351 174.074633,155.953567 195.5,112.5" id="Line-10" stroke="#979797" stroke-linecap="square"></path>
+        <text id="SubPage" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="121.827148" y="211">SubPage</tspan>
+        </text>
+        <text id="Page" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="283.15918" y="211">Page</tspan>
+        </text>
+        <text id="Chunk" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="379.334961" y="211">Chunk</tspan>
+        </text>
+        <path d="M296.5,113.471831 L296.5,179.528169" id="Line-11" stroke="#979797" stroke-linecap="square"></path>
+        <path d="M397.5,113.471831 L397.5,179.528169" id="Line-11" stroke="#979797" stroke-linecap="square"></path>
+    </g>
+</svg>

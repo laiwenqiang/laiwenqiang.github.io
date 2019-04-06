@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="585px" height="253px" viewBox="0 0 585 253" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>MemoryRegionCache</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="MemoryRegionCache" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Class" transform="translate(183.000000, 68.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="16B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="12.4931641" y="21">16B</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(261.000000, 68.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="32B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="12.4931641" y="21">32B</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(105.000000, 68.000000)" fill="#B8E986" stroke="#979797">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3"></path>
+        </g>
+        <g id="Class" transform="translate(339.000000, 68.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="48B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="12.4931641" y="21">48B</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(460.000000, 68.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="480B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="9.15625" y="21">480B</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(538.000000, 68.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="496B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="9.15625" y="21">496B</tspan>
+            </text>
+        </g>
+        <text id="…" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="417" y="89">…</tspan>
+        </text>
+        <g id="Class" transform="translate(104.000000, 143.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L40,34.5 C44.1421356,34.5 47.5,31.1421356 47.5,27 L47.5,8 C47.5,3.85786438 44.1421356,0.5 40,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="512B" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="9.65625" y="21">512B</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(183.000000, 143.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="1K" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="15.8300781" y="21">1K</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(261.000000, 143.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="2K" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="15.8300781" y="21">2K</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(105.000000, 218.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="8K" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="15.8300781" y="21">8K</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(183.000000, 218.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="16K" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="12.4931641" y="21">16K</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(261.000000, 218.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="32K" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="12.4931641" y="21">32K</tspan>
+            </text>
+        </g>
+        <g id="Class" transform="translate(339.000000, 143.000000)">
+            <path d="M8,0.5 C3.85786438,0.5 0.5,3.85786438 0.5,8 L0.5,27 C0.5,31.1421356 3.85786438,34.5 8,34.5 L39,34.5 C43.1421356,34.5 46.5,31.1421356 46.5,27 L46.5,8 C46.5,3.85786438 43.1421356,0.5 39,0.5 L8,0.5 Z" id="Rectangle-3" stroke="#979797" fill="#B8E986"></path>
+            <text id="4K" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+                <tspan x="15.8300781" y="21">4K</tspan>
+            </text>
+        </g>
+        <text id="tiny[32]" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="12.1630859" y="89">tiny[32]</tspan>
+        </text>
+        <text id="small[4]" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="9.32421875" y="164">small[4]</tspan>
+        </text>
+        <text id="normal[3]" font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#000000">
+            <tspan x="0.163085938" y="239">normal[3]</tspan>
+        </text>
+        <text font-family="Arial-BoldMT, Arial" font-size="18" font-weight="bold" fill="#000000">
+            <tspan x="194.478516" y="14">MemoryRegionCache</tspan>
+        </text>
+    </g>
+</svg>

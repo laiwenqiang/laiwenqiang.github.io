@@ -379,6 +379,7 @@
 <p>内存分配时，会先从缓存中取，如果没有再进行分配。这里的缓存就是本文的内容。</p>
 </blockquote>
 <h1 id="内存大小分类"><a href="#内存大小分类" class="headerlink" title="内存大小分类"></a>内存大小分类</h1><p>小于512B的称之为tiny，用SubPage管理；介于512B和8K之间的称之为small，用Page管理；介于8K和16M的叫做normal，用Chunk管理；再大的叫做huge，这个类型的内存不会进行缓存。</p>
+<p><img src="/2019/04/05/Netty笔记-MemoryRegionCache/MemorySize.svg" alt=""></p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/04/05/Netty笔记-MemoryRegionCache/#more" rel="contents">
